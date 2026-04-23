@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Búsqueda - UniSierra Eats</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="color: inherit;"><span class="logo-text">Uni<span class="highlight-orange">Sierra</span> Eats</span></a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" value="Lonches" placeholder="Buscar lonches, bebidas, snacks...">
+                <button class="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-actions">
+                <a href="#" class="btn-text">Escribir Reseña</a>
+                <a href="#" class="btn-outline">Iniciar Sesión</a>
+                <a href="#" class="btn-solid">Registrarse</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="search-layout section-container">
+        
+        <aside class="filters-sidebar">
+            <h3>Filtros</h3>
+            
+            <div class="filter-group">
+                <h4>Precio</h4>
+                <div class="price-filters">
+                    <button class="btn-price active">$</button>
+                    <button class="btn-price">$$</button>
+                    <button class="btn-price">$$$</button>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4>Categoría</h4>
+                <label class="custom-checkbox">
+                    <input type="checkbox" checked>
+                    <span class="checkmark"></span> Comidas Fuertes
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span> Bebidas y Café
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span> Snacks
+                </label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Restricciones Dietéticas</h4>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span> Vegetariano
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span> Vegano
+                </label>
+            </div>
+        </aside>
+
+        <section class="results-content">
+            <div class="results-header">
+                <h2>Top Resultados para "Lonches"</h2>
+                <div class="sort-dropdown">
+                    <label for="sort">Ordenar por:</label>
+                    <select id="sort">
+                        <option value="recommended">Recomendados</option>
+                        <option value="rating">Mejor Calificados</option>
+                        <option value="reviews">Más Reseñas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="results-list">
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

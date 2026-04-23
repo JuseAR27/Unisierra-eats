@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafetería UniSierra - Opiniones y Evaluaciones</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-text">Uni<span class="highlight-orange">Sierra</span> Eats</span>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar lonches, bebidas, snacks...">
+                <button class="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-actions">
+                <a href="#" class="btn-text">Escribir Reseña</a>
+                <a href="#" class="btn-outline">Iniciar Sesión</a>
+                <a href="#" class="btn-solid">Registrarse</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Descubre qué comer hoy en el campus</h1>
+                <p>Lee opiniones de otros alumnos y encuentra los productos mejor evaluados de la cafetería.</p>
+            </div>
+        </section>
+
+        <section class="section-container" style="text-align: center; margin: 0 auto 40px auto; background-color: var(--bg-card); padding: 40px 20px; border-radius: 8px; border: 1px solid var(--border-color); max-width: 900px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="margin-bottom: 10px; color: var(--primary-green);">¿Buscas algo en específico?</h2>
+            <p style="margin-bottom: 25px; color: var(--text-muted); font-size: 1.1rem;">Revisa nuestro catálogo completo organizado por categorías y con precios actualizados en tiempo real.</p>
+            <a href="menu.html" class="btn-solid" style="font-size: 1.1rem; padding: 12px 30px; display: inline-block; transition: transform 0.2s;"><i class="fas fa-book-open"></i> Ver Menú de la Cafetería</a>
+        </section>
+
+        <section class="categories section-container">
+            <h2>Explorar por Categoría</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <i class="fas fa-hamburger category-icon"></i>
+                    <h3>Comidas Fuertes</h3>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-coffee category-icon"></i>
+                    <h3>Bebidas y Café</h3>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-cookie category-icon"></i>
+                    <h3>Snacks</h3>
+                </div>
+                <div class="category-card">
+                    <i class="fas fa-apple-alt category-icon"></i>
+                    <h3>Opciones Sanas</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="top-rated section-container">
+            <h2>Actividad Reciente</h2>
+            <div class="product-grid">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="section-container">
+            <p>&copy; 2026 Sistema de Evaluación de Cafetería - Universidad de la Sierra.</p>
+        </div>
+    </footer>
+
+    <div id="authModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 id="modalTitle">Iniciar Sesión</h2>
+                <button class="close-modal" id="closeAuthModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="authForm" class="admin-form">
+                <div class="form-group">
+                    <label>Correo Institucional</label>
+                    <input type="email" id="authEmail" placeholder="ejemplo@unisierra.edu.mx" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="authPassword" placeholder="******" required>
+                </div>
+                <div class="modal-footer" style="justify-content: center; flex-direction: column; gap: 10px;">
+                    <button type="submit" class="btn-solid btn-large" style="width: 100%;">Entrar</button>
+                    <p class="text-muted" style="text-align: center; font-size: 0.9rem; margin-top: 10px;">
+                        Para esta prueba, usa cualquier correo.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>

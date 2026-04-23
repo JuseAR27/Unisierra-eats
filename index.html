@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cargando UniSierra Eats...</title>
+    <script>
+        // Verificamos si hay sesión
+        const sesion = JSON.parse(localStorage.getItem('unisierra_sesion'));
+        
+        if (sesion && sesion.id_rol === 1) {
+            // Es admin
+            window.location.replace("admin/panel_admin.html");
+        } else {
+            // Es estudiante o no hay sesión
+            window.location.replace("public/index.html");
+        }
+    </script>
+</head>
+<body></body>
+</html>

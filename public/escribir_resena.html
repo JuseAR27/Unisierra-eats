@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escribir Reseña - UniSierra Eats</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="color: inherit;"><span class="logo-text">Uni<span class="highlight-orange">Sierra</span> Eats</span></a>
+            </div>
+            <div class="nav-actions">
+                <a href="perfil.html" class="btn-text"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="section-container write-review-page">
+        <div class="review-layout">
+            
+            <aside class="product-summary-sidebar">
+                <div class="summary-card">
+                    <div class="summary-image" style="background-image: url('https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=60');"></div>
+                    <div class="summary-details">
+                        <h3>Lonche de Pierna Especial</h3>
+                        <p class="text-muted">Cafetería Central, Barra 1</p>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="review-form-container">
+                <h1>Cuéntanos, ¿qué te pareció?</h1>
+                
+                <form action="#" method="POST" class="review-form">
+                    <div class="form-group">
+                        <label>¿Cómo calificarías este producto?</label>
+                        <div class="star-rating-input">
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span class="rating-text">Selecciona una calificación</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="review-body">Escribe tu reseña</label>
+                        <p class="form-hint">Menciona el sabor, la porción, el tiempo de espera o el precio.</p>
+                        <textarea id="review-body" rows="6" placeholder="Comparte tu experiencia con la comunidad estudiantil..."></textarea>
+                        <div class="char-counter">Mínimo 85 caracteres.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Añade algunas fotos (Opcional)</label>
+                        <div class="photo-upload-box">
+                            <i class="fas fa-camera"></i>
+                            <p>Arrastra tus fotos aquí o haz clic para buscar</p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="detalle_producto.html" class="btn-outline">Cancelar</a>
+                        <button type="submit" class="btn-solid btn-large">Publicar Reseña</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

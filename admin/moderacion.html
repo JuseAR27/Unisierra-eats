@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderación - UniSierra Eats</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="admin-body">
+
+    <header class="navbar admin-navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-text">Uni<span class="highlight-orange">Sierra</span> <span class="admin-badge">ADMIN</span></span>
+            </div>
+            <div class="nav-actions">
+                <span class="admin-user"><i class="fas fa-user-shield"></i> Personal Cafetería</span>
+                <a href="../public/index.html" class="btn-outline text-danger" style="border-color: #d93025;">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <nav class="admin-nav">
+                <p class="nav-heading">Gestión Principal</p>
+                <a href="panel_admin.html"><i class="fas fa-box-open"></i> Inventario y Precios</a>
+                <a href="moderacion.html" class="active"><i class="fas fa-flag"></i> Moderación de Reseñas <span class="badge">2</span></a>
+                
+                <p class="nav-heading">Análisis</p>
+                <a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes y Estadísticas</a>
+            </nav>
+        </aside>
+
+        <main class="admin-content">
+            <div class="content-header">
+                <div>
+                    <h1>Moderación de Contenido</h1>
+                    <p class="text-muted">Revisa las reseñas reportadas por la comunidad estudiantil y toma acción.</p>
+                </div>
+            </div>
+
+            <div class="moderation-grid">
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

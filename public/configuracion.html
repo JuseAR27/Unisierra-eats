@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Cuenta - UniSierra Eats</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="color: inherit;"><span class="logo-text">Uni<span class="highlight-orange">Sierra</span> Eats</span></a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar lonches, bebidas, snacks...">
+                <button class="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-actions">
+                <a href="escribir_resena.html" class="btn-text">Escribir Reseña</a>
+                <a href="perfil.html" class="btn-solid"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="section-container settings-page">
+        <div class="settings-header">
+            <h1>Configuración de la Cuenta</h1>
+            <p class="text-muted">Actualiza tu información personal y preferencias.</p>
+        </div>
+
+        <div class="settings-layout">
+            <aside class="settings-sidebar">
+                <nav class="settings-nav">
+                    <a href="#" id="tab-profile" class="active">Perfil Público</a>
+                    <a href="#" id="tab-password">Contraseña</a>
+                </nav>
+            </aside>
+
+            <section class="settings-content">
+                <div id="section-profile">
+                    <form action="#" method="POST" class="settings-form">
+                        <div class="form-group profile-photo-edit">
+                            <label>Tu foto de perfil</label>
+                            <div class="photo-controls">
+                                <div class="current-photo">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <button type="button" class="btn-outline">Cambiar foto</button>
+                                <button type="button" class="btn-text text-danger">Eliminar</button>
+                            </div>
+                        </div>
+
+                        <hr class="divider">
+
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label for="first-name">Nombre(s) *</label>
+                                <input type="text" id="first-name" required>
+                            </div>
+                            <div class="form-group half-width">
+                                <label for="last-name">Apellidos *</label>
+                                <input type="text" id="last-name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Correo Institucional</label>
+                            <input type="email" id="email" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="major">Carrera / Facultad</label>
+                            <select id="major">
+                                <option value="sistemas">Ingeniería en Sistemas Computacionales</option>
+                                <option value="administracion">Licenciatura en Administración</option>
+                                <option value="biologia">Licenciatura en Biología</option>
+                                <option value="industrial">Ingeniería Industrial</option>
+                            </select>
+                        </div>
+
+                        <div class="form-actions mt-20">
+                            <button type="submit" class="btn-solid">Guardar Perfil</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="section-password" style="display: none;">
+                    <form id="form-change-password" class="settings-form">
+                        <h2>Cambiar Contraseña</h2>
+                        <p class="form-hint">Asegúrate de usar una contraseña segura que no uses en otros sitios.</p>
+                        
+                        <div class="form-group mt-20">
+                            <label for="current-password">Contraseña Actual</label>
+                            <input type="password" id="current-password" required placeholder="••••••••">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-password">Nueva Contraseña</label>
+                            <input type="password" id="new-password" required placeholder="Mínimo 6 caracteres">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Confirmar Nueva Contraseña</label>
+                            <input type="password" id="confirm-password" required placeholder="Repite la nueva contraseña">
+                        </div>
+
+                        <div class="form-actions mt-20">
+                            <button type="submit" class="btn-solid">Actualizar Contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

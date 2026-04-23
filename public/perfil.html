@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - UniSierra Eats</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="color: inherit;"><span class="logo-text">Uni<span class="highlight-orange">Sierra</span> Eats</span></a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar lonches, bebidas, snacks...">
+                <button class="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-actions">
+                <a href="escribir_resena.html" class="btn-text">Escribir Reseña</a>
+                <a href="perfil.html" class="btn-solid"><i class="fas fa-user-circle"></i> Mi Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="section-container profile-page">
+        <div class="profile-cover" style="background-color: var(--border-color);">
+            <button class="btn-outline-light"><i class="fas fa-image"></i> Añadir foto de portada</button>
+        </div>
+
+        <div class="profile-layout">
+            <aside class="profile-sidebar">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h1 class="profile-name">José Francisco A.</h1>
+                <p class="profile-location">Sonora, México</p>
+
+                <div class="profile-quick-actions">
+                    <button class="action-icon"><i class="fas fa-pen"></i><span>Editar</span></button>
+                    <button class="action-icon"><i class="fas fa-camera"></i><span>Foto</span></button>
+                    <button class="action-icon"><i class="fas fa-user-plus"></i><span>Amigos</span></button>
+                </div>
+
+                <nav class="profile-nav">
+                    <a href="#" class="active"><i class="fas fa-chart-line"></i> Resumen de actividad</a>
+                    <a href="#"><i class="fas fa-star"></i> Mis Reseñas</a>
+                    <a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a>
+                </nav>
+            </aside>
+
+            <section class="profile-content">
+                
+                <div class="profile-widget">
+                    <h2>Tu próxima reseña te espera</h2>
+                    <div class="pending-review-card">
+                        <div class="pending-img" style="background-image: url('https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=60');"></div>
+                        <div class="pending-info">
+                            <h3>Lonche de Pierna Especial</h3>
+                            <p>¿Recomiendas este producto?</p>
+                            <div class="star-rating-input small">
+                                <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <button class="close-btn"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
+                <div class="profile-widget">
+                    <h2>Más sobre mí</h2>
+                    <div class="about-grid">
+                        <div class="about-item">
+                            <span class="about-label">Ubicación</span>
+                            <span class="about-value">Sonora, México</span>
+                        </div>
+                        <div class="about-item">
+                            <span class="about-label">Miembro desde</span>
+                            <span class="about-value">Marzo 2026</span>
+                        </div>
+                        <div class="about-item">
+                            <span class="about-label">Carrera</span>
+                            <span class="about-value">Sistemas Computacionales</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-widget">
+                    <h2>Actividad Reciente</h2>
+                    <div class="reviews-list">
+                        <article class="single-review">
+                            <div class="reviewer-info">
+                                <div>
+                                    <h4 class="reviewer-name">Evaluaste: Jugo Natural Naranja</h4>
+                                    <span class="review-date">Ayer</span>
+                                </div>
+                            </div>
+                            <div class="rating-stars small-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <p class="review-body">Excelente para empezar el día antes de clases, súper fresco. Siempre lo pido.</p>
+                            <div class="review-actions">
+                                <button class="btn-action-small"><i class="fas fa-pen"></i> Editar</button>
+                                <button class="btn-action-small"><i class="fas fa-trash"></i> Eliminar</button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
