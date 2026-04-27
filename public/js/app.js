@@ -848,7 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path.includes('index.html') || path === '/' || path === '') renderizarInicio();
     else if (path.includes('busqueda.html')) renderizarBusqueda();
     else if (path.includes('detalle_producto.html')) renderizarDetalleProducto();
-    else if (path.includes('menu.html')) renderizarMenu();  // ¡Agregamos el menú a las rutas!
+    else if (path.includes('menu.html')) renderizarMenu();
     else if (path.includes('configuracion.html')) manejarConfiguracion();
     else if (path.includes('escribir_resena.html')) manejarEscrituraResena();
     else if (path.includes('perfil.html')) manejarPerfil();
