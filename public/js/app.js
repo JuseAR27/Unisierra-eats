@@ -694,7 +694,7 @@ function actualizarUsuarioEnBD(usuarioActualizado) {
 
 /**
  * Procesa la creación de una nueva reseña (escribir_resena.html).
- * Guarda la reseña, la calificación y recalcula automáticamente el promedio del producto (RNF-12).
+ * Guarda la reseña, la calificación y recalcula automáticamente el promedio del producto.
  */
 function manejarEscrituraResena() {
     const urlParams = new URLSearchParams(window.location.search);
