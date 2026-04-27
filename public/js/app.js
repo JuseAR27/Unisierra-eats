@@ -788,7 +788,7 @@ function manejarPerfil() {
     const sesion = JSON.parse(localStorage.getItem('unisierra_sesion'));
     if(!sesion) return;
 
-    // Mostrar Nombre y la inicial del apellido (como pide tu HTML)
+    // Mostrar Nombre y la inicial del apellido
     const inicialApellido = sesion.apellidos ? sesion.apellidos.charAt(0) + "." : "";
     nombrePerfil.textContent = `${sesion.nombre_usuario} ${inicialApellido}`;
     
@@ -808,7 +808,6 @@ function manejarPerfil() {
         values[2].textContent = nombresCarreras[sesion.carrera] || sesion.carrera;
     }
 
-    // (Lógica de carga de reseñas del perfil se mantiene igual...)
     const resenasContenedor = document.querySelector('.reviews-list');
     const todasLasResenas = JSON.parse(localStorage.getItem('unisierra_resenas')) || [];
     const calificaciones = JSON.parse(localStorage.getItem('unisierra_calificaciones')) || [];
