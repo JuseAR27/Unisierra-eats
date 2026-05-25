@@ -1,0 +1,24 @@
+{
+  "name": "proyecto-unisierraeats",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuseAR27/Unisierra-eats.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JuseAR27/Unisierra-eats/issues"
+  },
+  "homepage": "https://github.com/JuseAR27/Unisierra-eats#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
