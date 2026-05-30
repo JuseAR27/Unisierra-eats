@@ -1417,3 +1417,164 @@ footer {
     .ranking-grid { grid-template-columns: 1fr; }
     .report-header { flex-direction: column; gap: 5px; }
 }
+
+.admin-form .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.admin-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.admin-form input,
+.admin-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+    background-color: #fafafa;
+}
+
+/* Efecto al hacer clic en un campo de texto */
+.admin-form input:focus,
+.admin-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+    background-color: #ffffff;
+}
+
+/* Ajustes específicos para el modal de Autenticación */
+#authModal .modal-content {
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+#authModal .modal-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+#authModal .btn-solid {
+    background-color: var(--primary-green);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+#authModal .btn-solid:hover {
+    background-color: #27ae60;
+}
+
+/* =========================================
+   BARRAS DE DESPLAZAMIENTO PARA MODALES
+========================================= */
+.modal-content {
+    max-height: 85vh; 
+    overflow-y: auto; 
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--primary-green);
+    border-radius: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #27ae60;
+}
+
+/* =========================================
+   ESTILOS PARA BOTÓN CANCELAR Y CATEGORÍAS
+========================================= */
+
+.close-modal {
+    background-color: transparent; 
+    border: none;
+    color: #888;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: #d93025;
+    background-color: rgba(217, 48, 37, 0.1);
+}
+
+.admin-form select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: #fafafa;
+    color: var(--text-main);
+    cursor: pointer;
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%23555'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-form select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+    background-color: #ffffff;
+}
+
+.admin-form select option {
+    color: #333333;
+    background-color: #ffffff; 
+    font-weight: 500;
+}
+
+.admin-form .modal-footer .btn-outline,
+.admin-form .modal-footer button[type="button"] {
+    background-color: transparent; 
+    color: #d93025; 
+    border: 2px solid #d93025; 
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-form .modal-footer .btn-outline:hover,
+.admin-form .modal-footer button[type="button"]:hover {
+    background-color: #d93025;
+    color: #ffffff;
+}
