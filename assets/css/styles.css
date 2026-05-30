@@ -1443,6 +1443,41 @@ footer {
     background-color: #fafafa;
 }
 
+.custom-alert-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(3px);
+}
+
+.custom-alert-box {
+    background-color: var(--bg-card, #1e1e1e);
+    border-top: 4px solid var(--primary-orange, #f39c12);
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    text-align: center;
+    color: var(--text-main, #ffffff);
+}
+
+.custom-alert-box h3 { margin-bottom: 15px; font-size: 1.2rem; }
+.custom-alert-box p { margin-bottom: 20px; color: var(--text-muted, #aaaaaa); }
+.custom-alert-box input, .custom-alert-box textarea {
+    width: 100%; padding: 10px; margin-bottom: 15px;
+    border-radius: 6px; border: 1px solid #444;
+    background: #2a2a2a; color: #fff; font-family: inherit;
+}
+
+.custom-alert-actions {
+    display: flex; justify-content: center; gap: 15px;
+}
+
+.custom-alert-box.danger-mode { border-top-color: #d93025; }
+
 /* Efecto al hacer clic en un campo de texto */
 .admin-form input:focus,
 .admin-form textarea:focus {

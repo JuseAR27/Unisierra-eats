@@ -14,8 +14,7 @@ async function obtenerProductosAPI() {
             ...p,
             id_producto: p.id,
             precio_actual: p.precio,
-            imagen: p.imagen_url || 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60',
-            categoria: "Catálogo General",
+            imagen: p.imagen_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=500&q=60',
             precioNivel: p.precio < 40 ? "$" : "$$",
             etiquetas: ["Disponible"]
         }));
@@ -361,13 +360,82 @@ async function manejarEscrituraResena() {
     });
 }
 
-// Manejo del Perfil y Edición/Eliminación de Reseñas
+// Herramienta para crear modales
+function mostrarModalPersonalizado({ titulo, mensaje, tipo = 'confirm', valorInput = '', valorCalif = '' }) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-alert-overlay';
+        
+        let bodyHtml = `<p>${mensaje}</p>`;
+        if (tipo === 'prompt') {
+            bodyHtml = `
+                <input type="number" id="customCalif" min="1" max="5" value="${valorCalif}" placeholder="Calificación (1-5)">
+                <textarea id="customComentario" rows="3" placeholder="Tu comentario...">${valorInput}</textarea>
+            `;
+        }
+
+        overlay.innerHTML = `
+            <div class="custom-alert-box ${tipo === 'confirm' ? 'danger-mode' : ''}">
+                <h3>${titulo}</h3>
+                ${bodyHtml}
+                <div class="custom-alert-actions">
+                    <button id="btnCustomCancel" class="btn-outline" style="border-color:#888; color:#888;">Cancelar</button>
+                    <button id="btnCustomAceptar" class="btn-solid" style="background:${tipo === 'confirm' ? '#d93025' : 'var(--primary-green)'}">
+                        ${tipo === 'confirm' ? 'Eliminar' : 'Guardar'}
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+
+        document.getElementById('btnCustomCancel').onclick = () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        };
+
+        document.getElementById('btnCustomAceptar').onclick = () => {
+            if (tipo === 'prompt') {
+                const calif = document.getElementById('customCalif').value;
+                const comentario = document.getElementById('customComentario').value;
+                document.body.removeChild(overlay);
+                resolve({ calificacion: calif, comentario: comentario });
+            } else {
+                document.body.removeChild(overlay);
+                resolve(true);
+            }
+        };
+    });
+}
+
+// Manejo de perfil
 async function manejarPerfil() {
     const sesion = JSON.parse(localStorage.getItem('unisierra_sesion'));
     if(!sesion) return window.location.href = "index.html";
 
     const nombrePerfil = document.querySelector('.profile-name');
     if (nombrePerfil) nombrePerfil.textContent = sesion.nombre;
+
+    // Lógica para cambiar entre pestañas del perfil (Resumen vs Mis Reseñas)
+    const btnResumen = document.querySelector('.profile-nav li:nth-child(1)');
+    const btnMisResenas = document.querySelector('.profile-nav li:nth-child(2)');
+    const seccionResumen = document.getElementById('resumen-actividad');
+    const seccionResenas = document.getElementById('mis-resenas');
+
+    // Función auxiliar para cambiar pestañas visualmente
+    function activarPestana(activa, inactiva, secActiva, secInactiva) {
+        if(activa && secActiva) {
+            activa.classList.add('active');
+            inactiva.classList.remove('active');
+            secActiva.style.display = 'block';
+            secInactiva.style.display = 'none';
+        }
+    }
+
+    if (btnResumen && btnMisResenas) {
+        btnResumen.addEventListener('click', () => activarPestana(btnResumen, btnMisResenas, seccionResumen, seccionResenas));
+        btnMisResenas.addEventListener('click', () => activarPestana(btnMisResenas, btnResumen, seccionResenas, seccionResumen));
+    }
 
     const resenasContenedor = document.querySelector('.reviews-list');
     if (!resenasContenedor) return;
@@ -380,7 +448,7 @@ async function manejarPerfil() {
             resenasContenedor.innerHTML = ""; 
 
             if (misResenas.length === 0) {
-                resenasContenedor.innerHTML = "<p>Aún no has escrito ninguna reseña.</p>";
+                resenasContenedor.innerHTML = "<p style='color: var(--text-muted);'>Aún no has escrito ninguna reseña.</p>";
                 return;
             }
 
@@ -388,58 +456,70 @@ async function manejarPerfil() {
                 resenasContenedor.innerHTML += `
                     <article class="single-review" style="background: var(--bg-card); padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px;">
                         <div class="reviewer-info" style="display: flex; justify-content: space-between; align-items: center;">
-                            <h4 class="reviewer-name">Evaluaste: ${r.producto_nombre}</h4>
-                            <div class="review-actions" style="gap: 10px;">
-                                <button class="btn-action-small edit-btn" data-id="${r.id}" data-comentario="${r.comentario}" data-calif="${r.calificacion}"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="btn-action-small report-btn delete-btn" data-id="${r.id}"><i class="fas fa-trash"></i> Eliminar</button>
+                            <h4 class="reviewer-name" style="margin:0;">Evaluaste: <span style="color:var(--primary-green)">${r.producto_nombre}</span></h4>
+                            <div class="review-actions" style="display: flex; gap: 10px;">
+                                <button class="btn-action-small edit-btn" style="background:transparent; border:1px solid #aaa; color:#ccc; padding:5px 10px; border-radius:4px; cursor:pointer;" data-id="${r.id}" data-comentario="${r.comentario}" data-calif="${r.calificacion}"><i class="fas fa-edit"></i> Editar</button>
+                                <button class="btn-action-small report-btn delete-btn" style="background:transparent; border:1px solid #d93025; color:#d93025; padding:5px 10px; border-radius:4px; cursor:pointer;" data-id="${r.id}"><i class="fas fa-trash"></i> Eliminar</button>
                             </div>
                         </div>
-                        <span class="review-date">${r.fecha}</span>
-                        <div class="rating-stars small-stars" style="color:var(--primary-orange); margin: 5px 0;">
+                        <span class="review-date" style="font-size:0.85rem; color:#888;">${r.fecha}</span>
+                        <div class="rating-stars small-stars" style="color:var(--primary-orange); margin: 8px 0;">
                             ${generarEstrellas(r.calificacion)}
                         </div>
-                        <p class="review-body">${r.comentario}</p>
+                        <p class="review-body" style="margin:0;">${r.comentario}</p>
                     </article>
                 `;
             });
 
             asignarEventosResenas();
         } catch (e) {
+            console.error("Error", e);
             resenasContenedor.innerHTML = "<p>Error al cargar tus reseñas.</p>";
         }
     }
 
     function asignarEventosResenas() {
-        // Eliminar Reseña
+        // Eliminar Reseña (Con Modal Estético)
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.currentTarget.dataset.id;
-                if(confirm("¿Seguro que deseas eliminar esta reseña?")) {
+                const confirmado = await mostrarModalPersonalizado({
+                    titulo: 'Eliminar Reseña',
+                    mensaje: '¿Estás seguro de que deseas eliminar esta reseña de forma permanente?'
+                });
+                
+                if(confirmado) {
                     await fetch(`/api/resenas/${id}`, { method: 'DELETE' });
-                    cargarMisResenas();
+                    cargarMisResenas(); // Recarga la lista
                 }
             });
         });
 
-        // Editar Reseña (Prompt rápido para simplificar la interfaz)
+        // Editar Reseña (Con Modal Estético)
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const dataset = e.currentTarget.dataset;
-                const nuevoComentario = prompt("Edita tu comentario:", dataset.comentario);
-                if (nuevoComentario === null) return;
                 
-                let nuevaCalif = prompt("Nueva calificación (1 a 5):", dataset.calif);
-                nuevaCalif = parseInt(nuevaCalif);
-                if (isNaN(nuevaCalif) || nuevaCalif < 1 || nuevaCalif > 5) {
-                    return alert("Calificación inválida.");
-                }
-
-                await fetch(`/api/resenas/${dataset.id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ calificacion: nuevaCalif, comentario: nuevoComentario })
+                const resultado = await mostrarModalPersonalizado({
+                    titulo: 'Editar Reseña',
+                    tipo: 'prompt',
+                    valorCalif: dataset.calif,
+                    valorInput: dataset.comentario
                 });
-                cargarMisResenas();
+
+                if (resultado) {
+                    const nuevaCalif = parseInt(resultado.calificacion);
+                    if (isNaN(nuevaCalif) || nuevaCalif < 1 || nuevaCalif > 5) {
+                        return alert("Por favor ingresa una calificación válida del 1 al 5.");
+                    }
+
+                    await fetch(`/api/resenas/${dataset.id}`, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ calificacion: nuevaCalif, comentario: resultado.comentario })
+                    });
+                    cargarMisResenas();
+                }
             });
         });
     }

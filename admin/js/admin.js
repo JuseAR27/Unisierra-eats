@@ -148,14 +148,30 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.btn-icon.delete').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
-                    if (confirm(`¿Estás seguro de que deseas eliminar el producto #${id} de la base de datos?`)) {
+                    
+                    // Creamos el modal estético en el vuelo
+                    const overlay = document.createElement('div');
+                    overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;";
+                    overlay.innerHTML = `
+                        <div style="background:var(--bg-card,#1e1e1e); border-top:4px solid #d93025; padding:25px; border-radius:12px; text-align:center; color:#fff;">
+                            <h3 style="margin-bottom:15px;">Eliminar Producto</h3>
+                            <p style="margin-bottom:20px; color:#aaa;">¿Seguro que deseas eliminar el producto #${id}?</p>
+                            <button id="btnAdminCancel" style="background:transparent; border:1px solid #888; color:#888; padding:8px 15px; border-radius:6px; margin-right:10px; cursor:pointer;">Cancelar</button>
+                            <button id="btnAdminEliminar" style="background:#d93025; border:none; color:#fff; padding:8px 15px; border-radius:6px; cursor:pointer;">Eliminar</button>
+                        </div>
+                    `;
+                    document.body.appendChild(overlay);
+
+                    document.getElementById('btnAdminCancel').onclick = () => document.body.removeChild(overlay);
+                    document.getElementById('btnAdminEliminar').onclick = async () => {
+                        document.body.removeChild(overlay);
                         try {
                             await fetch(`/api/productos/${id}`, { method: 'DELETE' });
                             cargarProductos();
                         } catch (error) {
                             console.error("Error al eliminar:", error);
                         }
-                    }
+                    };
                 });
             });
         }
