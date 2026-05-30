@@ -552,6 +552,79 @@ async function manejarPerfil() {
     cargarMisResenas();
 }
 
+// Configuración de Usuario
+function manejarConfiguracion() {
+    const sesion = JSON.parse(localStorage.getItem('unisierra_sesion'));
+    if(!sesion) return window.location.href = "index.html";
+
+    const inputNombre = document.getElementById('configNombre');
+    const inputEmail = document.getElementById('configEmail');
+    const inputPassword = document.getElementById('configPassword');
+    const formConfig = document.getElementById('configForm');
+    const btnEliminar = document.getElementById('btnEliminarCuenta');
+
+    if(!formConfig) return;
+
+    // Llenar los campos con la información actual
+    inputNombre.value = sesion.nombre;
+    inputEmail.value = sesion.correo;
+
+    // Guardar Cambios (Actualizar)
+    formConfig.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const payload = {
+            nombre: inputNombre.value.trim(),
+            password: inputPassword.value
+        };
+
+        try {
+            const res = await fetch(`/api/usuarios/${sesion.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                sesion.nombre = payload.nombre;
+                localStorage.setItem('unisierra_sesion', JSON.stringify(sesion));
+                
+                await mostrarModalPersonalizado({
+                    titulo: '¡Éxito!',
+                    mensaje: 'Tus datos han sido actualizados correctamente.',
+                    tipo: 'success'
+                });
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error("Error al actualizar:", error);
+        }
+    });
+
+    // Eliminar Cuenta
+    btnEliminar.addEventListener('click', async () => {
+        const confirmado = await mostrarModalPersonalizado({
+            titulo: 'Advertencia Peligrosa',
+            mensaje: '¿Estás completamente seguro de eliminar tu cuenta? Esta acción borrará todas tus reseñas y no se puede deshacer.',
+            tipo: 'confirm'
+        });
+
+        if (confirmado) {
+            try {
+                const res = await fetch(`/api/usuarios/${sesion.id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    // Borramos la sesión y lo mandamos a la página principal
+                    localStorage.removeItem('unisierra_sesion');
+                    alert("Tu cuenta ha sido eliminada.");
+                    window.location.href = "index.html";
+                }
+            } catch (error) {
+                console.error("Error al eliminar cuenta:", error);
+            }
+        }
+    });
+}
+
 // --- INICIALIZACIÓN GLOBAL ---
 document.addEventListener('DOMContentLoaded', () => {
     configurarAuth();
@@ -564,4 +637,5 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (path.includes('menu.html') || path.includes('busqueda.html')) renderizarMenu();
     else if (path.includes('escribir_resena.html')) manejarEscrituraResena();
     else if (path.includes('perfil.html')) manejarPerfil();
+    else if (path.includes('configuracion.html')) manejarConfiguracion();
 });
