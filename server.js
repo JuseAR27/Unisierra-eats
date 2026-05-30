@@ -111,6 +111,40 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+// PUT: Modificar datos del usuario (Nombre o Contraseña)
+app.put('/api/usuarios/:id', (req, res) => {
+    const { nombre, password } = req.body;
+    let sql, params;
+
+    // Si el usuario escribió una nueva contraseña, la actualizamos. Si no, solo el nombre.
+    if (password && password.trim() !== "") {
+        sql = "UPDATE Usuarios SET nombre = ?, password = ? WHERE id = ?";
+        params = [nombre, password, req.params.id];
+    } else {
+        sql = "UPDATE Usuarios SET nombre = ? WHERE id = ?";
+        params = [nombre, req.params.id];
+    }
+
+    db.run(sql, params, function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ mensaje: "Perfil actualizado correctamente" });
+    });
+});
+
+// DELETE: Eliminar cuenta de usuario
+app.delete('/api/usuarios/:id', (req, res) => {
+    // Primero, eliminamos las reseñas que este usuario escribió para evitar errores de llave foránea
+    db.run("DELETE FROM Resenas WHERE usuario_id = ?", req.params.id, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        // Luego, eliminamos al usuario
+        db.run("DELETE FROM Usuarios WHERE id = ?", req.params.id, function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ mensaje: "Cuenta eliminada correctamente" });
+        });
+    });
+});
+
 // -- API RESTful PARA RESEÑAS --
 
 // GET: Obtener todas las reseñas de un usuario específico (Para el Perfil)
