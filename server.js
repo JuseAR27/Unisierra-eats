@@ -148,6 +148,21 @@ app.delete('/api/usuarios/:id', (req, res) => {
 // -- API RESTful PARA RESEÑAS --
 
 // GET: Obtener todas las reseñas de un usuario específico (Para el Perfil)
+
+app.get('/api/resenas/producto/:producto_id', (req, res) => {
+    const sql = `
+        SELECT r.id, r.calificacion, r.comentario, r.fecha, u.nombre as usuario_nombre 
+        FROM Resenas r 
+        JOIN Usuarios u ON r.usuario_id = u.id 
+        WHERE r.producto_id = ? 
+        ORDER BY r.fecha DESC
+    `;
+    db.all(sql, [req.params.producto_id], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
 app.get('/api/resenas/usuario/:usuario_id', (req, res) => {
     const sql = `
         SELECT r.id, r.calificacion, r.comentario, r.fecha, 

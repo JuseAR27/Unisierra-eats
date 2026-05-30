@@ -265,7 +265,7 @@ async function renderizarDetalleProducto() {
             };
         }
 
-        // Cargar Reseñas desde API
+// Cargar Reseñas desde API y Actualizar Barras de Progreso
         const resenasContenedor = document.querySelector('.reviews-list');
         if (resenasContenedor) {
             try {
@@ -273,29 +273,61 @@ async function renderizarDetalleProducto() {
                 const resenas = await res.json();
                 resenasContenedor.innerHTML = ""; 
 
+                // --- LÓGICA: BARRAS DE PROGRESO DINÁMICAS ---
+                const ratingBarsContainer = document.querySelector('.rating-bars');
+                if (ratingBarsContainer) {
+                    const conteoEstrellas = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+                    resenas.forEach(r => {
+                        const calif = Math.round(r.calificacion);
+                        if(conteoEstrellas[calif] !== undefined) conteoEstrellas[calif]++;
+                    });
+
+                    let barrasHtml = "";
+                    const totalResenas = resenas.length;
+
+                    for (let i = 5; i >= 1; i--) {
+                        const porcentaje = totalResenas === 0 ? 0 : Math.round((conteoEstrellas[i] / totalResenas) * 100);
+                        const numResenasEstrella = conteoEstrellas[i];
+                        
+                        barrasHtml += `
+                            <div class="bar-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span class="star-label" style="width: 40px; color: var(--text-main); font-weight: bold;">${i} <i class="fas fa-star" style="color: var(--primary-orange); font-size: 0.9rem;"></i></span>
+                                <div class="progress-bar" style="flex-grow: 1; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; margin: 0 12px; overflow: hidden;">
+                                    <div class="progress-fill" style="width: ${porcentaje}%; height: 100%; background: var(--primary-orange); border-radius: 4px; transition: width 0.8s ease-out;"></div>
+                                </div>
+                                <span class="percent" style="width: 35px; text-align: right; color: var(--text-muted); font-size: 0.9rem;">${porcentaje}%</span>
+                            </div>
+                        `;
+                    }
+                    ratingBarsContainer.innerHTML = barrasHtml;
+                }
+                // --- FIN DE LÓGICA DE BARRAS ---
+
+                // Pintar la lista de reseñas (Comentarios)
                 if (resenas.length === 0) {
                     resenasContenedor.innerHTML = `<p style="color: var(--text-muted);">Aún no hay reseñas. ¡Sé el primero en opinar!</p>`;
                 } else {
                     resenas.forEach(r => {
                         resenasContenedor.innerHTML += `
-                            <article class="single-review">
-                                <div class="reviewer-info">
-                                    <div class="reviewer-avatar"><i class="fas fa-user-circle"></i></div>
+                            <article class="single-review" style="background: var(--bg-card); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+                                <div class="reviewer-info" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                    <div class="reviewer-avatar" style="font-size: 2rem; color: #888;"><i class="fas fa-user-circle"></i></div>
                                     <div>
-                                        <h4 class="reviewer-name">${r.usuario_nombre}</h4>
-                                        <span class="review-date">Escrita el ${r.fecha}</span>
+                                        <h4 class="reviewer-name" style="margin: 0; color: var(--primary-green);">${r.usuario_nombre}</h4>
+                                        <span class="review-date" style="font-size: 0.8rem; color: #888;">Escrita el ${r.fecha.split(' ')[0]}</span>
                                     </div>
                                 </div>
-                                <div class="rating-stars small-stars" style="color:var(--primary-orange)">
+                                <div class="rating-stars small-stars" style="color:var(--primary-orange); margin-bottom: 10px;">
                                     ${generarEstrellas(r.calificacion)}
                                 </div>
-                                <p class="review-body">${r.comentario}</p>
+                                <p class="review-body" style="margin: 0; color: var(--text-main); line-height: 1.5;">${r.comentario}</p>
                             </article>
                         `;
                     });
                 }
             } catch (e) {
                 console.error("Error al cargar reseñas", e);
+                resenasContenedor.innerHTML = `<p style="color: #d93025;">Ocurrió un error al cargar las opiniones.</p>`;
             }
         }
     }
