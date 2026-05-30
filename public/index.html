@@ -78,12 +78,16 @@
     </footer>
 
     <div id="authModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content" style="max-width: 400px; border-top: 4px solid var(--primary-green);">
             <div class="modal-header">
                 <h2 id="modalTitle">Iniciar Sesión</h2>
                 <button class="close-modal" id="closeAuthModal"><i class="fas fa-times"></i></button>
             </div>
             <form id="authForm" class="admin-form">
+                <div class="form-group" id="groupNombre" style="display: none;">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="authNombre" placeholder="Ej. Juan Pérez">
+                </div>
                 <div class="form-group">
                     <label>Correo Institucional</label>
                     <input type="email" id="authEmail" placeholder="ejemplo@unisierra.edu.mx" required>
@@ -94,8 +98,8 @@
                 </div>
                 <div class="modal-footer" style="justify-content: center; flex-direction: column; gap: 10px;">
                     <button type="submit" class="btn-solid btn-large" style="width: 100%;">Entrar</button>
-                    <p class="text-muted" style="text-align: center; font-size: 0.9rem; margin-top: 10px;">
-                        Para esta prueba, usa cualquier correo.
+                    <p class="text-muted" id="authHint" style="text-align: center; font-size: 0.9rem; margin-top: 10px;">
+                        Ingresa tus credenciales para continuar.
                     </p>
                 </div>
             </form>
