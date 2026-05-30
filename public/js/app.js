@@ -361,16 +361,31 @@ async function manejarEscrituraResena() {
 }
 
 // Herramienta para crear modales
-function mostrarModalPersonalizado({ titulo, mensaje, tipo = 'confirm', valorInput = '', valorCalif = '' }) {
+function mostrarModalPersonalizado({ titulo, mensaje, tipo = 'confirm', valorInput = '', valorCalif = 5, imagen = '', nombre = '' }) {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
         overlay.className = 'custom-alert-overlay';
         
         let bodyHtml = `<p>${mensaje}</p>`;
-        if (tipo === 'prompt') {
+        
+        // Estructura especial para editar reseñas
+        if (tipo === 'edit-review') {
+            let estrellasHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                estrellasHtml += `<i class="${i <= valorCalif ? 'fas' : 'far'} fa-star custom-star" data-val="${i}" style="cursor:pointer; font-size:1.8rem; color:var(--primary-orange); margin: 0 5px; transition: 0.2s;"></i>`;
+            }
             bodyHtml = `
-                <input type="number" id="customCalif" min="1" max="5" value="${valorCalif}" placeholder="Calificación (1-5)">
-                <textarea id="customComentario" rows="3" placeholder="Tu comentario...">${valorInput}</textarea>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; text-align:left; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                    <img src="${imagen || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=500&q=60'}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+                    <div>
+                        <h4 style="margin:0; color:var(--primary-green); font-size:1.1rem;">${nombre}</h4>
+                        <p style="margin:0; font-size:0.85rem; color:#aaa;">Edita tu calificación</p>
+                    </div>
+                </div>
+                <div id="customStarContainer" style="margin-bottom:15px;">
+                    ${estrellasHtml}
+                </div>
+                <textarea id="customComentario" rows="4" placeholder="Actualiza tu comentario...">${valorInput}</textarea>
             `;
         }
 
@@ -389,17 +404,30 @@ function mostrarModalPersonalizado({ titulo, mensaje, tipo = 'confirm', valorInp
         
         document.body.appendChild(overlay);
 
+        // Lógica para que las estrellas sean clicables
+        let currentRating = parseInt(valorCalif);
+        if (tipo === 'edit-review') {
+            const stars = overlay.querySelectorAll('.custom-star');
+            stars.forEach(star => {
+                star.addEventListener('click', (e) => {
+                    currentRating = parseInt(e.currentTarget.dataset.val);
+                    stars.forEach((s, idx) => {
+                        s.className = idx < currentRating ? 'fas fa-star custom-star' : 'far fa-star custom-star';
+                    });
+                });
+            });
+        }
+
         document.getElementById('btnCustomCancel').onclick = () => {
             document.body.removeChild(overlay);
             resolve(null);
         };
 
         document.getElementById('btnCustomAceptar').onclick = () => {
-            if (tipo === 'prompt') {
-                const calif = document.getElementById('customCalif').value;
-                const comentario = document.getElementById('customComentario').value;
+            if (tipo === 'edit-review') {
+                const comentario = document.getElementById('customComentario').value.trim();
                 document.body.removeChild(overlay);
-                resolve({ calificacion: calif, comentario: comentario });
+                resolve({ calificacion: currentRating, comentario: comentario });
             } else {
                 document.body.removeChild(overlay);
                 resolve(true);
@@ -458,7 +486,7 @@ async function manejarPerfil() {
                         <div class="reviewer-info" style="display: flex; justify-content: space-between; align-items: center;">
                             <h4 class="reviewer-name" style="margin:0;">Evaluaste: <span style="color:var(--primary-green)">${r.producto_nombre}</span></h4>
                             <div class="review-actions" style="display: flex; gap: 10px;">
-                                <button class="btn-action-small edit-btn" style="background:transparent; border:1px solid #aaa; color:#ccc; padding:5px 10px; border-radius:4px; cursor:pointer;" data-id="${r.id}" data-comentario="${r.comentario}" data-calif="${r.calificacion}"><i class="fas fa-edit"></i> Editar</button>
+                                <button class="btn-action-small edit-btn" style="background:transparent; border:1px solid #aaa; color:#ccc; padding:5px 10px; border-radius:4px; cursor:pointer;" data-id="${r.id}" data-comentario="${r.comentario}" data-calif="${r.calificacion}" data-nombre="${r.producto_nombre}" data-img="${r.producto_imagen}"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn-action-small report-btn delete-btn" style="background:transparent; border:1px solid #d93025; color:#d93025; padding:5px 10px; border-radius:4px; cursor:pointer;" data-id="${r.id}"><i class="fas fa-trash"></i> Eliminar</button>
                             </div>
                         </div>
@@ -495,28 +523,25 @@ async function manejarPerfil() {
             });
         });
 
-        // Editar Reseña (Con Modal Estético)
+        // Editar Reseña (Con Modal Estético de Estrellas)
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const dataset = e.currentTarget.dataset;
                 
                 const resultado = await mostrarModalPersonalizado({
                     titulo: 'Editar Reseña',
-                    tipo: 'prompt',
+                    tipo: 'edit-review',
                     valorCalif: dataset.calif,
-                    valorInput: dataset.comentario
+                    valorInput: dataset.comentario,
+                    nombre: dataset.nombre,
+                    imagen: dataset.img
                 });
 
                 if (resultado) {
-                    const nuevaCalif = parseInt(resultado.calificacion);
-                    if (isNaN(nuevaCalif) || nuevaCalif < 1 || nuevaCalif > 5) {
-                        return alert("Por favor ingresa una calificación válida del 1 al 5.");
-                    }
-
                     await fetch(`/api/resenas/${dataset.id}`, {
                         method: 'PUT',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ calificacion: nuevaCalif, comentario: resultado.comentario })
+                        body: JSON.stringify({ calificacion: resultado.calificacion, comentario: resultado.comentario })
                     });
                     cargarMisResenas();
                 }
