@@ -113,10 +113,11 @@ app.post('/api/login', (req, res) => {
 
 // -- API RESTful PARA RESEÑAS --
 
-// GET: Obtener todas las reseñas de un producto específico
+// GET: Obtener todas las reseñas de un usuario específico (Para el Perfil)
 app.get('/api/resenas/usuario/:usuario_id', (req, res) => {
     const sql = `
-        SELECT r.id, r.calificacion, r.comentario, r.fecha, p.nombre as producto_nombre 
+        SELECT r.id, r.calificacion, r.comentario, r.fecha, 
+               p.nombre as producto_nombre, p.imagen_url as producto_imagen 
         FROM Resenas r 
         JOIN Productos p ON r.producto_id = p.id 
         WHERE r.usuario_id = ? 
