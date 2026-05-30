@@ -19,14 +19,19 @@ const db = new sqlite3.Database('./unisierra_eats.db', (err) => {
 
 // -- API RESTful PARA PRODUCTOS --
 
-// GET: Listar todos los productos
+// GET: Listar todos los productos con su calificación promedio
 app.get('/api/productos', (req, res) => {
-    const sql = "SELECT * FROM Productos";
+    const sql = `
+        SELECT p.*, 
+               IFNULL(AVG(r.calificacion), 0) as calificacion,
+               COUNT(r.id) as numResenas
+        FROM Productos p
+        LEFT JOIN Resenas r ON p.id = r.producto_id
+        GROUP BY p.id
+    `;
     db.all(sql, [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows); // Enviamos los productos en formato JSON
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
     });
 });
 
@@ -109,15 +114,15 @@ app.post('/api/login', (req, res) => {
 // -- API RESTful PARA RESEÑAS --
 
 // GET: Obtener todas las reseñas de un producto específico
-app.get('/api/resenas/producto/:producto_id', (req, res) => {
+app.get('/api/resenas/usuario/:usuario_id', (req, res) => {
     const sql = `
-        SELECT r.id, r.calificacion, r.comentario, r.fecha, u.nombre as usuario_nombre 
+        SELECT r.id, r.calificacion, r.comentario, r.fecha, p.nombre as producto_nombre 
         FROM Resenas r 
-        JOIN Usuarios u ON r.usuario_id = u.id 
-        WHERE r.producto_id = ? 
+        JOIN Productos p ON r.producto_id = p.id 
+        WHERE r.usuario_id = ? 
         ORDER BY r.fecha DESC
     `;
-    db.all(sql, [req.params.producto_id], (err, rows) => {
+    db.all(sql, [req.params.usuario_id], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
