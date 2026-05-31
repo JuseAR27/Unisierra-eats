@@ -12,12 +12,15 @@
     <header class="navbar admin-navbar">
         <div class="nav-actions">
                 <span class="admin-user"><i class="fas fa-user-shield"></i> Personal Cafetería</span>
+                <button id="btn-nuevo-admin" class="btn-solid" style="background-color: var(--primary-orange); margin: 0 10px;">
+                    <i class="fas fa-user-plus"></i> Nuevo Admin
+                </button> 
                 <a href="../public/index.html" class="btn-solid" style="background-color: var(--primary-green); margin: 0 10px;">
                     <i class="fas fa-store"></i> Ir a Inicio
                 </a>
                 <a href="../public/index.html" onclick="localStorage.removeItem('unisierra_sesion');" class="btn-outline text-danger" style="border-color: #d93025;">
                     Cerrar Sesión
-                </a>            
+                </a>           
             </div>
     </header>
 
@@ -140,6 +143,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-text" onclick="document.getElementById('productModal').style.display='none'">Cancelar</button>
                     <button type="submit" class="btn-solid">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal-overlay" style="display: none; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background-color: var(--bg-card); width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); overflow: hidden;">
+            <div class="modal-header" style="padding: 20px 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: rgba(255, 255, 255, 0.02);">
+                <h2 style="margin: 0; font-size: 1.25rem; color: var(--text-main);">
+                    <i class="fas fa-user-shield" style="color: var(--primary-orange); margin-right: 10px;"></i> 
+                    Registrar Administrador
+                </h2>
+                <button class="btn-close" id="close-admin-modal" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-nuevo-admin" style="padding: 25px;">
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); font-size: 0.9rem;">Nombre Completo</label>
+                    <input type="text" id="new-admin-nombre" required class="form-control" placeholder="Ej. Juan Pérez" style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; box-sizing: border-box;">
+                </div>
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); font-size: 0.9rem;">Correo Institucional</label>
+                    <input type="email" id="new-admin-correo" required class="form-control" placeholder="admin@unisierra.edu.mx" style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; box-sizing: border-box;">
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); font-size: 0.9rem;">Contraseña Temporal</label>
+                    <input type="password" id="new-admin-password" required class="form-control" placeholder="Crea una contraseña segura" style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; box-sizing: border-box;">
+                </div>
+                <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" class="btn-outline" id="cancel-admin-modal" style="padding: 10px 20px; border-radius: 8px;">Cancelar</button>
+                    <button type="submit" class="btn-solid" style="background-color: var(--primary-orange); padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; color: white;">Crear Administrador</button>
                 </div>
             </form>
         </div>

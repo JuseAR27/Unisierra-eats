@@ -97,6 +97,23 @@ app.post('/api/registro', (req, res) => {
     });
 });
 
+app.post('/api/admin/registro', (req, res) => {
+    const { nombre, correo, password } = req.body;
+
+    if (!correo.toLowerCase().endsWith('@unisierra.edu.mx')) {
+        return res.status(400).json({ error: "Solo se permite registrar correos institucionales (@unisierra.edu.mx)." });
+    }
+
+    const sql = "INSERT INTO Usuarios (nombre, correo, password, rol_id) VALUES (?, ?, ?, 1)";
+    
+    db.run(sql, [nombre, correo, password], function(err) {
+        if (err) {
+            return res.status(400).json({ error: "Error: Es posible que este correo ya esté registrado en el sistema." });
+        }
+        res.json({ message: "Nuevo administrador registrado con éxito." });
+    });
+});
+
 // POST: Inicio de sesión
 app.post('/api/login', (req, res) => {
     const { correo, password } = req.body;

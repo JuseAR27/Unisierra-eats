@@ -426,4 +426,52 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ejecutar al entrar a la vista
         cargarDatosEstadisticos();
     }
+    
+    const btnNuevoAdmin = document.getElementById('btn-nuevo-admin');
+    const adminModal = document.getElementById('admin-modal');
+    
+    if (btnNuevoAdmin && adminModal) {
+        const closeAdminModal = document.getElementById('close-admin-modal');
+        const cancelAdminModal = document.getElementById('cancel-admin-modal');
+        const formNuevoAdmin = document.getElementById('form-nuevo-admin');
+
+        const cerrarModalAdmin = () => {
+            adminModal.style.display = 'none';
+            formNuevoAdmin.reset();
+        };
+
+        btnNuevoAdmin.addEventListener('click', () => adminModal.style.display = 'flex');
+        closeAdminModal.addEventListener('click', cerrarModalAdmin);
+        cancelAdminModal.addEventListener('click', cerrarModalAdmin);
+
+        formNuevoAdmin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const payload = {
+                nombre: document.getElementById('new-admin-nombre').value,
+                correo: document.getElementById('new-admin-correo').value,
+                password: document.getElementById('new-admin-password').value
+            };
+
+            try {
+                const res = await fetch('/api/admin/registro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    alert("¡Éxito! " + data.message);
+                    cerrarModalAdmin();
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un problema de conexión al registrar al administrador.");
+            }
+        });
+    }
 });
