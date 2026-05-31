@@ -41,10 +41,16 @@ function configurarAuth() {
 
     if (navActions) {
         if (sesion) {
+            const btnAdmin = sesion.rol_id === 1 
+                ? `<a href="../admin/panel_admin.html" class="btn-solid" style="background-color: var(--primary-orange); margin-right: 15px;"><i class="fas fa-cogs"></i> Panel Admin</a>`
+                : ``;
+
             navActions.innerHTML = `
+                ${btnAdmin}
                 <a href="perfil.html" class="btn-solid"><i class="fas fa-user-circle"></i> Hola, ${sesion.nombre.split(' ')[0]}</a>
                 <button id="btnLogout" class="btn-outline" style="border-color: #d93025; color: #d93025; padding: 6px 12px; margin-left: 10px;">Salir</button>
             `;
+            
             document.getElementById('btnLogout').addEventListener('click', () => {
                 localStorage.removeItem('unisierra_sesion');
                 window.location.href = 'index.html';
@@ -108,6 +114,12 @@ function configurarAuth() {
             } else {
                 // REGISTRARSE
                 payload.nombre = inputNombre.value;
+
+                if (!payload.correo.toLowerCase().endsWith('@unisierra.edu.mx')) {
+                    alert("Por favor, utiliza tu correo institucional (@unisierra.edu.mx) para registrarte.");
+                    return;
+                }
+
                 const res = await fetch('/api/registro', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });

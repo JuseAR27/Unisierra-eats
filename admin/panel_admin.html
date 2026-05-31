@@ -10,15 +10,15 @@
 <body class="admin-body">
 
     <header class="navbar admin-navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <span class="logo-text">Uni<span class="highlight-orange">Sierra</span> <span class="admin-badge">ADMIN</span></span>
-            </div>
-            <div class="nav-actions">
+        <div class="nav-actions">
                 <span class="admin-user"><i class="fas fa-user-shield"></i> Personal Cafetería</span>
-                <a href="../public/index.html" class="btn-outline text-danger" style="border-color: #d93025;">Cerrar Sesión</a>            
+                <a href="../public/index.html" class="btn-solid" style="background-color: var(--primary-green); margin: 0 10px;">
+                    <i class="fas fa-store"></i> Ir a Inicio
+                </a>
+                <a href="../public/index.html" onclick="localStorage.removeItem('unisierra_sesion');" class="btn-outline text-danger" style="border-color: #d93025;">
+                    Cerrar Sesión
+                </a>            
             </div>
-        </div>
     </header>
 
     <div class="admin-layout">
