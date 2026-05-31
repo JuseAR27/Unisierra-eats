@@ -50,9 +50,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 const respuesta = await fetch('/api/productos');
                 const productos = await respuesta.json();
                 renderizarTabla(productos);
+                actualizarEstadisticas(productos);
             } catch (error) {
                 console.error("Error al cargar productos:", error);
                 adminTable.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Error al cargar la base de datos.</td></tr>`;
+            }
+        }
+
+        function actualizarEstadisticas(productos) {
+            const totalProductosEl = document.getElementById('total-productos');
+            const totalResenasEl = document.getElementById('total-resenas');
+            const promedioCalifEl = document.getElementById('promedio-calificacion');
+
+            if (!productos || productos.length === 0) {
+                if (totalProductosEl) totalProductosEl.textContent = "0";
+                if (totalResenasEl) totalResenasEl.textContent = "0";
+                if (promedioCalifEl) promedioCalifEl.textContent = "0.0";
+                return;
+            }
+
+            if (totalProductosEl) totalProductosEl.textContent = productos.length;
+
+            let totalResenas = 0;
+            let sumaCalificaciones = 0;
+
+            productos.forEach(p => {
+                if (p.numResenas > 0) {
+                    totalResenas += p.numResenas;
+                    sumaCalificaciones += (p.calificacion * p.numResenas);
+                }
+            });
+
+            if (totalResenasEl) totalResenasEl.textContent = totalResenas;
+
+            if (promedioCalifEl) {
+                if (totalResenas > 0) {
+                    const promedio = sumaCalificaciones / totalResenas;
+                    promedioCalifEl.textContent = promedio.toFixed(1);
+                } else {
+                    promedioCalifEl.textContent = "0.0";
+                }
             }
         }
 
@@ -88,14 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
             asignarEventosBotonesAccion();
         }
 
-        const payload = {
-            nombre: inputNombre.value,
-            precio: parseFloat(inputPrecio.value),
-            descripcion: inputDesc.value,
-            imagen: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60",
-            categoria: inputCategoria.value
-        };
-
         // POST y PUT: Enviar datos del formulario a la API
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -104,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nombre: inputNombre.value,
                 precio: parseFloat(inputPrecio.value),
                 descripcion: inputDesc.value,
-                imagen_url: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60",
+                imagen: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60",
                 categoria: inputCategoria.value
             };
 
