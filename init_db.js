@@ -32,7 +32,7 @@ db.serialize(() => {
 
     // Crear tabla Productos
     db.run(`CREATE TABLE IF NOT EXISTS Productos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_producto INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
     precio REAL NOT NULL,
     precioNivel TEXT NOT NULL,
@@ -52,7 +52,7 @@ db.serialize(() => {
         comentario TEXT,
         fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (usuario_id) REFERENCES Usuarios (id),
-        FOREIGN KEY (producto_id) REFERENCES Productos (id)
+        FOREIGN KEY (producto_id) REFERENCES Productos (id_producto)
     )`);
 
     console.log('Tablas creadas correctamente.');
@@ -62,6 +62,16 @@ db.serialize(() => {
     
     db.run(`INSERT OR IGNORE INTO Usuarios (id, nombre, correo, password, rol_id) 
             VALUES (1, 'Admin Principal', 'admin@unisierra.edu.mx', 'admin123', 1)`);
+
+    db.run(`INSERT OR IGNORE INTO Productos (nombre, precio, precioNivel, descripcion, imagen, categoria) 
+            VALUES ('Torta de Asada', 65.00, '$$', 'Deliciosa torta de carne asada con aguacate, tomate y mayonesa. Perfecta para un gran apetito.', 'https://images.unsplash.com/photo-1615719413546-198b25453f85?auto=format&fit=crop&w=500&q=60', 'comidas'),
+            ('Chilaquiles Rojos', 55.00, '$$', 'Chilaquiles tradicionales con queso, crema, cebolla y un huevo estrellado.', 'https://images.unsplash.com/photo-1640718879612-40156d6ba433?auto=format&fit=crop&w=500&q=60', 'comidas'),
+            ('Café Americano', 20.00, '$', 'Café americano caliente recién hecho. Ideal para despertar antes de clases.', 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60', 'bebidas'),
+            ('Agua Fresca de Jamaica', 15.00, '$', 'Vaso grande de agua de jamaica 100% natural y refrescante.', 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=60', 'bebidas'),
+            ('Papas a la Francesa', 35.00, '$', 'Porción generosa de papas fritas crujientes con un toque de sal.', 'https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=500&q=60', 'snacks'),
+            ('Galleta con Chispas', 15.00, '$', 'Galleta grande recién horneada con deliciosas chispas de chocolate.', 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=500&q=60', 'snacks'),
+            ('Ensalada de Pollo', 75.00, '$$$', 'Mezcla de lechugas frescas, tomate, pepino y pechuga de pollo a la plancha.', 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500&q=60', 'sanas'),
+            ('Coctel de Frutas', 40.00, '$', 'Fruta de temporada picada (melón, papaya, plátano y manzana) con un poco de miel y granola.', 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=500&q=60', 'sanas');`);
 
     console.log('Datos iniciales insertados.');
 });
