@@ -26,8 +26,8 @@ app.get('/api/productos', (req, res) => {
                IFNULL(AVG(r.calificacion), 0) as calificacion,
                COUNT(r.id) as numResenas
         FROM Productos p
-        LEFT JOIN Resenas r ON p.id = r.producto_id
-        GROUP BY p.id
+        LEFT JOIN Resenas r ON p.id_producto = r.producto_id
+        GROUP BY p.id_producto -- <-- Cambio a p.id_producto
     `;
     db.all(sql, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -35,7 +35,7 @@ app.get('/api/productos', (req, res) => {
     });
 });
 
-// POST: Crear un nuevo producto (Alta)
+// POST: Crear un nuevo producto
 app.post('/api/productos', (req, res) => {
     const { nombre, precio, precioNivel, descripcion, imagen, categoria } = req.body;
     
@@ -49,17 +49,14 @@ app.post('/api/productos', (req, res) => {
         res.json({ message: "Producto registrado con éxito", id: this.lastID });
     });
 });
-
 // PUT: Modificar un producto existente
 app.put('/api/productos/:id', (req, res) => {
     const id = req.params.id;
-    const { nombre, descripcion, precio, imagen_url } = req.body;
-    const sql = "UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, imagen_url = ? WHERE id = ?";
+    const { nombre, descripcion, precio, imagen } = req.body; 
+    const sql = "UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, imagen = ? WHERE id_producto = ?";
     
-    db.run(sql, [nombre, descripcion, precio, imagen_url || '', id], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
+    db.run(sql, [nombre, descripcion, precio, imagen || '', id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
         res.json({ mensaje: `Producto ${id} actualizado correctamente` });
     });
 });
@@ -67,17 +64,15 @@ app.put('/api/productos/:id', (req, res) => {
 // DELETE: Eliminar un producto
 app.delete('/api/productos/:id', (req, res) => {
     const id = req.params.id;
-    const sql = "DELETE FROM Productos WHERE id = ?";
+    const sql = "DELETE FROM Productos WHERE id_producto = ?";
     
     db.run(sql, id, function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
+        if (err) return res.status(500).json({ error: err.message });
         res.json({ mensaje: `Producto ${id} eliminado correctamente` });
     });
 });
 
-// -- API RESTful PARA USUARIOS (Autenticación) --
+// -- API RESTful PARA USUARIOS --
 
 // POST: Registrar un nuevo usuario
 app.post('/api/registro', (req, res) => {
@@ -147,27 +142,12 @@ app.delete('/api/usuarios/:id', (req, res) => {
 // -- API RESTful PARA RESEÑAS --
 
 // GET: Obtener todas las reseñas de un usuario específico (Para el Perfil)
-
-app.get('/api/resenas/producto/:producto_id', (req, res) => {
-    const sql = `
-        SELECT r.id, r.calificacion, r.comentario, r.fecha, u.nombre as usuario_nombre 
-        FROM Resenas r 
-        JOIN Usuarios u ON r.usuario_id = u.id 
-        WHERE r.producto_id = ? 
-        ORDER BY r.fecha DESC
-    `;
-    db.all(sql, [req.params.producto_id], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
-});
-
 app.get('/api/resenas/usuario/:usuario_id', (req, res) => {
     const sql = `
         SELECT r.id, r.calificacion, r.comentario, r.fecha, 
-               p.nombre as producto_nombre, p.imagen_url as producto_imagen 
+               p.nombre as producto_nombre, p.imagen as producto_imagen 
         FROM Resenas r 
-        JOIN Productos p ON r.producto_id = p.id 
+        JOIN Productos p ON r.producto_id = p.id_producto 
         WHERE r.usuario_id = ? 
         ORDER BY r.fecha DESC
     `;

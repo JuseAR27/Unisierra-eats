@@ -38,7 +38,7 @@ db.serialize(() => {
     precioNivel TEXT NOT NULL,
     descripcion TEXT,
     imagen TEXT,
-    calificacion REAL DEFAULT 5.0,
+    calificacion REAL DEFAULT 0.0,
     numResenas INTEGER DEFAULT 0,
     categoria TEXT NOT NULL
     )`);

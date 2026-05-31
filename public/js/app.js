@@ -12,9 +12,9 @@ async function obtenerProductosAPI() {
         const prods = await res.json();
         return prods.map(p => ({
             ...p,
-            id_producto: p.id,
+            id_producto: p.id_producto,
             precio_actual: p.precio,
-            imagen: p.imagen_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=500&q=60',
+            imagen: p.imagen || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=500&q=60',
             precioNivel: p.precio < 40 ? "$" : "$$",
             etiquetas: ["Disponible"]
         }));

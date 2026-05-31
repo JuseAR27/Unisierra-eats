@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             adminTable.innerHTML = "";
 
             const productosFiltrados = productos.filter(p => {
-                return p.nombre.toLowerCase().includes(terminoBusqueda) || p.id.toString().includes(terminoBusqueda);
+                return p.nombre.toLowerCase().includes(terminoBusqueda) || p.id_producto.toString().includes(terminoBusqueda);
             });
 
             if (productosFiltrados.length === 0) {
@@ -72,14 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
             productosFiltrados.forEach(p => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>#00${p.id}</td>
+                    <td>#00${p.id_producto}</td>
                     <td><strong>${p.nombre}</strong></td>
-                    <td>Cafetería</td>
+                    <td>${p.categoria}</td>
                     <td class="price-cell">$${parseFloat(p.precio).toFixed(2)}</td>
                     <td><span class="status-badge active">Disponible</span></td>
                     <td class="table-actions">
-                        <button class="btn-icon edit" data-id="${p.id}" data-nombre="${p.nombre}" data-precio="${p.precio}" data-desc="${p.descripcion}" data-img="${p.imagen_url}" data-categoria="${p.categoria}" title="Editar"><i class="fas fa-pen"></i></button>
-                        <button class="btn-icon delete" data-id="${p.id}" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        <button class="btn-icon edit" data-id="${p.id_producto}" data-nombre="${p.nombre}" data-precio="${p.precio}" data-desc="${p.descripcion}" data-img="${p.imagen}" data-categoria="${p.categoria}" title="Editar"><i class="fas fa-pen"></i></button>
+                        <button class="btn-icon delete" data-id="${p.id_producto}" title="Eliminar"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 adminTable.appendChild(tr);
@@ -87,6 +87,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             asignarEventosBotonesAccion();
         }
+
+        const payload = {
+            nombre: inputNombre.value,
+            precio: parseFloat(inputPrecio.value),
+            descripcion: inputDesc.value,
+            imagen: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60",
+            categoria: inputCategoria.value
+        };
 
         // POST y PUT: Enviar datos del formulario a la API
         form.addEventListener('submit', async (e) => {
