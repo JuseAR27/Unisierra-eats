@@ -245,72 +245,127 @@ async function renderizarMenu() {
     `;
 }
 
+let todosLosProductosBusqueda = [];
+
 async function renderizarBusqueda() {
     const resultsList = document.querySelector('.results-list');
     if (!resultsList) return;
 
-    // Obtener lo que el usuario buscó desde la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q') || '';
-    
-    // Colocar la palabra buscada en el input del header para que no se borre
-    const searchInput = document.querySelector('.search-bar input');
-    if (searchInput && query) {
-        searchInput.value = query;
-    }
+    try {
+        // Obtener todos los productos de la API
+        todosLosProductosBusqueda = await obtenerProductosAPI();
 
-    // 3. Actualizar el título de la página
+        // Leer lo que el usuario buscó desde la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q') || '';
+        const categoria = urlParams.get('categoria') || '';
+        const searchInput = document.querySelector('.search-bar input');
+        if (searchInput && query) searchInput.value = query;
+        if (categoria) {
+            const checkbox = document.querySelector(`input.filter-categoria[value="${categoria.toLowerCase()}"]`);
+            if (checkbox) checkbox.checked = true;
+        }
+
+        window.terminoBusquedaActual = query.toLowerCase();
+
+        // Evento para checkboxes de Categoría
+        const checkboxesCategorias = document.querySelectorAll('.filter-categoria');
+        checkboxesCategorias.forEach(cb => cb.addEventListener('change', aplicarFiltrosDinamicos));
+
+        // Evento para los botones de Precio ($, $$, $$$)
+        const priceBtns = document.querySelectorAll('.btn-price');
+        priceBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Si ya está activo y lo volvemos a clicar, lo desactivamos (quitar filtro)
+                if (e.target.classList.contains('active')) {
+                    e.target.classList.remove('active');
+                } else {
+                    // Si no, quitamos el activo de todos y se lo ponemos al clickeado
+                    priceBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                }
+                aplicarFiltrosDinamicos(); // Llamar filtro matemático
+            });
+        });
+
+        // Evento para el menú de "Ordenar por"
+        const sortSelect = document.getElementById('sort');
+        if (sortSelect) sortSelect.addEventListener('change', aplicarFiltrosDinamicos);
+
+        aplicarFiltrosDinamicos();
+
+    } catch (e) {
+        console.error("Error al cargar la búsqueda:", e);
+        resultsList.innerHTML = `<p style="color: red; text-align:center;">Error al cargar los productos.</p>`;
+    }
+}
+
+function aplicarFiltrosDinamicos() {
+    const resultsList = document.querySelector('.results-list');
     const titleElement = document.querySelector('.results-header h2');
-    if (titleElement) {
-        titleElement.textContent = query ? `Top Resultados para "${query}"` : 'Todos los productos';
-    }
+    
+    // Clonar la lista completa de productos
+    let filtrados = [...todosLosProductosBusqueda];
 
-    // Obtener productos de la API
-    let productos = await obtenerProductosAPI();
-
-    // Filtrar por el texto buscado
-    const categoria = urlParams.get('categoria') || '';
-
-    if (query) {
-        const termino = query.toLowerCase();
-        productos = productos.filter(p => 
+    // Filtrar por barra de texto (si existe)
+    if (window.terminoBusquedaActual) {
+        const termino = window.terminoBusquedaActual;
+        filtrados = filtrados.filter(p => 
             p.nombre.toLowerCase().includes(termino) || 
             p.descripcion.toLowerCase().includes(termino) ||
-            (p.categoria && p.categoria.toLowerCase().includes(termino)) // <-- NUEVO: Busca en categoría
+            (p.categoria && p.categoria.toLowerCase().includes(termino))
         );
+        if (titleElement) titleElement.textContent = `Resultados para "${window.terminoBusquedaActual}"`;
+    } else {
+        if (titleElement) titleElement.textContent = `Todos los productos`;
     }
 
-    if (categoria) {
-        const terminoCat = categoria.toLowerCase();
-        productos = productos.filter(p => 
-            p.categoria && p.categoria.toLowerCase().includes(terminoCat) // <-- NUEVO: Filtra directo
-        );
-        if (titleElement) titleElement.textContent = `Categoría: ${categoria}`;
-    }
-
-    // Activar la interactividad de los botones de precio
-    const priceBtns = document.querySelectorAll('.btn-price');
-    priceBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            priceBtns.forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
+    // Filtrar por Categorías marcadas
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('.filter-categoria:checked'))
+                                         .map(cb => cb.value.toLowerCase());
+    
+    if (categoriasSeleccionadas.length > 0) {
+        filtrados = filtrados.filter(p => {
+            if (!p.categoria) return false;
+            const catBD = p.categoria.toLowerCase();
+            return categoriasSeleccionadas.some(catCheck => catBD.includes(catCheck) || catCheck.includes(catBD));
         });
-    });
+    }
+
+    // Filtrar por Precio ($, $$, $$$)
+    const activePriceBtn = document.querySelector('.btn-price.active');
+    if (activePriceBtn) {
+        const nivelPrecio = activePriceBtn.textContent.trim(); // Extrae $, $$, o $$$
+        filtrados = filtrados.filter(p => p.precioNivel === nivelPrecio);
+    }
+
+    // Ordenamiento
+    const sortSelect = document.getElementById('sort');
+    if (sortSelect) {
+        const orden = sortSelect.value;
+        if (orden === 'rating') {
+            // Mejor Calificados de mayor a menor
+            filtrados.sort((a, b) => (b.calificacion || 0) - (a.calificacion || 0));
+        } else if (orden === 'reviews') {
+            // Más reseñas primero
+            filtrados.sort((a, b) => (b.numResenas || 0) - (a.numResenas || 0));
+        }
+    }
 
     resultsList.innerHTML = ""; 
 
-    if (productos.length === 0) {
-        resultsList.innerHTML = `<p style="text-align:center; margin-top:20px; color:var(--text-muted);">No se encontraron productos que coincidan con tu búsqueda.</p>`;
+    if (filtrados.length === 0) {
+        resultsList.innerHTML = `<p style="text-align:center; margin-top:20px; color:var(--text-muted); width: 100%;">No se encontraron productos con estos filtros.</p>`;
         return;
     }
 
-    productos.forEach(p => {
+    filtrados.forEach(p => {
         resultsList.innerHTML += `
             <div class="result-card">
                 <div class="result-image" style="background-image: url('${p.imagen}'); cursor:pointer;" onclick="window.location.href='detalle_producto.html?id=${p.id_producto}'"></div>
                 <div class="result-details">
                     <div class="result-title-row">
-                        <h3 onclick="window.location.href='detalle_producto.html?id=${p.id_producto}'">${p.nombre}</h3>
+                        <h3 onclick="window.location.href='detalle_producto.html?id=${p.id_producto}'" style="cursor:pointer;">${p.nombre}</h3>
                         <i class="far fa-heart heart-icon"></i>
                     </div>
                     <div class="rating-stars" style="color:var(--primary-orange); margin-bottom: 5px;">
@@ -320,7 +375,7 @@ async function renderizarBusqueda() {
                     <div class="result-tags">
                         <span class="tag tag-price">${p.precioNivel}</span>
                         <span class="dot-separator">•</span>
-                        <span class="tag tag-category">Cafetería</span>
+                        <span class="tag tag-category">${p.categoria || 'Cafetería'}</span>
                     </div>
                     <p class="review-snippet">${p.descripcion.substring(0, 100)}...</p>
                 </div>
