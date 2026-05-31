@@ -232,6 +232,82 @@ async function renderizarMenu() {
     `;
 }
 
+async function renderizarBusqueda() {
+    const resultsList = document.querySelector('.results-list');
+    if (!resultsList) return;
+
+    // 1. Obtener lo que el usuario buscó desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q') || '';
+    
+    // 2. Colocar la palabra buscada en el input del header para que no se borre
+    const searchInput = document.querySelector('.search-bar input');
+    if (searchInput && query) {
+        searchInput.value = query;
+    }
+
+    // 3. Actualizar el título de la página
+    const titleElement = document.querySelector('.results-header h2');
+    if (titleElement) {
+        titleElement.textContent = query ? `Top Resultados para "${query}"` : 'Todos los productos';
+    }
+
+    // 4. Obtener productos de la API
+    let productos = await obtenerProductosAPI();
+
+    // 5. Filtrar por el texto buscado
+    if (query) {
+        const termino = query.toLowerCase();
+        productos = productos.filter(p => 
+            p.nombre.toLowerCase().includes(termino) || 
+            p.descripcion.toLowerCase().includes(termino)
+        );
+    }
+
+    // 6. Activar la interactividad de los botones de precio (Filtro visual inicial)
+    const priceBtns = document.querySelectorAll('.btn-price');
+    priceBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            priceBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            // Aquí en un futuro puedes agregar lógica extra para filtrar por precio
+        });
+    });
+
+    resultsList.innerHTML = ""; 
+
+    // 7. Mostrar mensaje si no hay resultados
+    if (productos.length === 0) {
+        resultsList.innerHTML = `<p style="text-align:center; margin-top:20px; color:var(--text-muted);">No se encontraron productos que coincidan con tu búsqueda.</p>`;
+        return;
+    }
+
+    // 8. Pintar las tarjetas de resultados usando la estructura de busqueda.html
+    productos.forEach(p => {
+        resultsList.innerHTML += `
+            <div class="result-card">
+                <div class="result-image" style="background-image: url('${p.imagen}'); cursor:pointer;" onclick="window.location.href='detalle_producto.html?id=${p.id_producto}'"></div>
+                <div class="result-details">
+                    <div class="result-title-row">
+                        <h3 onclick="window.location.href='detalle_producto.html?id=${p.id_producto}'">${p.nombre}</h3>
+                        <i class="far fa-heart heart-icon"></i>
+                    </div>
+                    <div class="rating-stars" style="color:var(--primary-orange); margin-bottom: 5px;">
+                        ${generarEstrellas(p.calificacion)}
+                        <span style="color:var(--text-muted); font-size:0.9rem; margin-left:5px;">${p.calificacion.toFixed(1)} (${p.numResenas} reseñas)</span>
+                    </div>
+                    <div class="result-tags">
+                        <span class="tag tag-price">${p.precioNivel}</span>
+                        <span class="dot-separator">•</span>
+                        <span class="tag tag-category">Cafetería</span>
+                    </div>
+                    <p class="review-snippet">${p.descripcion.substring(0, 100)}...</p>
+                </div>
+            </div>
+        `;
+    });
+}
+
 async function renderizarDetalleProducto() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = parseInt(urlParams.get('id'));
@@ -666,7 +742,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (path.includes('index.html') || path === '/' || path === '') renderizarInicio();
     else if (path.includes('detalle_producto.html')) renderizarDetalleProducto();
-    else if (path.includes('menu.html') || path.includes('busqueda.html')) renderizarMenu();
+    else if (path.includes('menu.html')) renderizarMenu();
+    else if (path.includes('busqueda.html')) renderizarBusqueda();
     else if (path.includes('escribir_resena.html')) manejarEscrituraResena();
     else if (path.includes('perfil.html')) manejarPerfil();
     else if (path.includes('configuracion.html')) manejarConfiguracion();
