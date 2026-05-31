@@ -51,6 +51,7 @@ db.serialize(() => {
         calificacion INTEGER NOT NULL CHECK(calificacion >= 1 AND calificacion <= 5),
         comentario TEXT,
         fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+        estado TEXT DEFAULT 'activa',
         FOREIGN KEY (usuario_id) REFERENCES Usuarios (id),
         FOREIGN KEY (producto_id) REFERENCES Productos (id_producto)
     )`);

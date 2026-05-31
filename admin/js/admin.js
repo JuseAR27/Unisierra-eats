@@ -241,7 +241,71 @@ document.addEventListener('DOMContentLoaded', () => {
     // MÓDULOS DE MODERACIÓN Y REPORTES 
     // ==========================================
     function iniciarModeracion() {
-        console.log("Módulo de moderación pendiente de migrar a base de datos.");
+        const gridModeracion = document.querySelector('.moderation-grid');
+        if (!gridModeracion) return;
+
+        async function cargarReportadas() {
+            try {
+                const res = await fetch('/api/admin/resenas-reportadas');
+                const reportadas = await res.json();
+                renderizarModeracion(reportadas);
+            } catch(e) {
+                console.error(e);
+                gridModeracion.innerHTML = `<p style="color:red;">Error al cargar reportes.</p>`;
+            }
+        }
+
+        function renderizarModeracion(resenas) {
+            gridModeracion.innerHTML = "";
+            if(resenas.length === 0) {
+                gridModeracion.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--bg-card); border-radius: 8px;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--primary-green); margin-bottom: 15px;"></i>
+                        <h2>¡Todo limpio!</h2>
+                        <p class="text-muted">No hay reseñas pendientes de moderación.</p>
+                    </div>`;
+                return;
+            }
+
+            resenas.forEach(r => {
+                gridModeracion.innerHTML += `
+                    <div style="background: var(--bg-card); padding: 20px; border-radius: 8px; border-left: 4px solid #d93025; margin-bottom: 15px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <div>
+                                <h4 style="margin:0; color:var(--primary-green);">${r.usuario_nombre}</h4>
+                                <span style="font-size:0.85rem; color:#888;">Producto: <strong>${r.producto_nombre}</strong></span>
+                            </div>
+                            <div class="stars" style="color:var(--primary-orange);">
+                                ${Array(r.calificacion).fill('<i class="fas fa-star"></i>').join('')}
+                            </div>
+                        </div>
+                        <p style="background:rgba(255,255,255,0.05); padding:15px; border-radius:6px; font-style:italic;">"${r.comentario}"</p>
+                        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top: 15px;">
+                            <button onclick="aprobarResena(${r.id})" class="btn-outline" style="border-color:var(--primary-green); color:var(--primary-green);"><i class="fas fa-check"></i> Ignorar Reporte</button>
+                            <button onclick="eliminarResena(${r.id})" class="btn-solid" style="background:#d93025;"><i class="fas fa-trash"></i> Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Funciones para los botones de la tarjeta
+        window.aprobarResena = async (id) => {
+            if(confirm("¿Estás seguro de restaurar esta reseña a la vista pública?")) {
+                await fetch(`/api/admin/resenas/${id}/aprobar`, {method: 'PUT'});
+                cargarReportadas();
+            }
+        };
+
+        window.eliminarResena = async (id) => {
+            if(confirm("¿Borrar definitivamente esta reseña por violar las normas?")) {
+                // Reutilizamos tu endpoint DELETE original de reseñas de server.js
+                await fetch(`/api/resenas/${id}`, {method: 'DELETE'});
+                cargarReportadas();
+            }
+        };
+
+        cargarReportadas();
     }
 
     function iniciarReportes() {

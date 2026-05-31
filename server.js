@@ -27,7 +27,7 @@ app.get('/api/productos', (req, res) => {
                COUNT(r.id) as numResenas
         FROM Productos p
         LEFT JOIN Resenas r ON p.id_producto = r.producto_id
-        GROUP BY p.id_producto -- <-- Cambio a p.id_producto
+        GROUP BY p.id_producto
     `;
     db.all(sql, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -145,14 +145,14 @@ app.delete('/api/usuarios/:id', (req, res) => {
 
 // -- API RESTful PARA RESEÑAS --
 
-// GET: Obtener todas las reseñas de un usuario específico (Para el Perfil)
+// GET: Obtener todas las reseñas de un usuario específico
 app.get('/api/resenas/usuario/:usuario_id', (req, res) => {
     const sql = `
         SELECT r.id, r.calificacion, r.comentario, r.fecha, 
                p.nombre as producto_nombre, p.imagen as producto_imagen 
         FROM Resenas r 
         JOIN Productos p ON r.producto_id = p.id_producto 
-        WHERE r.usuario_id = ? 
+        WHERE r.usuario_id = ? AND r.estado = 'activa'
         ORDER BY r.fecha DESC
     `;
     db.all(sql, [req.params.usuario_id], (err, rows) => {
@@ -168,7 +168,7 @@ app.get('/api/resenas/producto/:producto_id', (req, res) => {
                u.nombre as usuario_nombre 
         FROM Resenas r 
         JOIN Usuarios u ON r.usuario_id = u.id 
-        WHERE r.producto_id = ? 
+        WHERE r.producto_id = ? AND r.estado = 'activa'
         ORDER BY r.fecha DESC
     `;
     db.all(sql, [req.params.producto_id], (err, rows) => {
@@ -206,6 +206,49 @@ app.delete('/api/resenas/:id', (req, res) => {
     db.run(sql, req.params.id, function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ mensaje: "Reseña eliminada" });
+    });
+});
+
+// --- API RESTful PARA MODERACIÓN DE RESEÑAS ---
+
+// Reportar una reseña
+app.put('/api/resenas/:id/reportar', (req, res) => {
+    db.run("UPDATE Resenas SET estado = 'reportada' WHERE id = ?", [req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ mensaje: "Reseña reportada." });
+    });
+});
+
+// Ver todas las reseñas reportadas
+app.get('/api/admin/resenas-reportadas', (req, res) => {
+    const sql = `
+        SELECT r.id, r.comentario, r.fecha, r.calificacion,
+               u.nombre as usuario_nombre, p.nombre as producto_nombre
+        FROM Resenas r
+        JOIN Usuarios u ON r.usuario_id = u.id
+        JOIN Productos p ON r.producto_id = p.id_producto
+        WHERE r.estado = 'reportada'
+        ORDER BY r.fecha DESC
+    `;
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Perdonar/Aprobar reseña
+app.put('/api/admin/resenas/:id/aprobar', (req, res) => {
+    db.run("UPDATE Resenas SET estado = 'activa' WHERE id = ?", [req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ mensaje: "Reseña restaurada." });
+    });
+});
+
+// Eliminar permanentemente la reseña
+app.delete('/api/admin/resenas/:id', (req, res) => {
+    db.run("DELETE FROM Resenas WHERE id = ?", [req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ mensaje: "Reseña eliminada permanentemente." });
     });
 });
 

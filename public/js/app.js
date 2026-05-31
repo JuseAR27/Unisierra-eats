@@ -385,7 +385,7 @@ async function renderizarDetalleProducto() {
                 } else {
                     resenas.forEach(r => {
                         resenasContenedor.innerHTML += `
-                            <article class="single-review" style="background: var(--bg-card); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+                            <article class="single-review" style="background: var(--bg-card); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); position: relative;">
                                 <div class="reviewer-info" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                                     <div class="reviewer-avatar" style="font-size: 2rem; color: #888;"><i class="fas fa-user-circle"></i></div>
                                     <div>
@@ -393,6 +393,11 @@ async function renderizarDetalleProducto() {
                                         <span class="review-date" style="font-size: 0.8rem; color: #888;">Escrita el ${r.fecha.split(' ')[0]}</span>
                                     </div>
                                 </div>
+                                
+                                <button onclick="reportarResena(${r.id})" title="Reportar contenido inapropiado" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+
                                 <div class="rating-stars small-stars" style="color:var(--primary-orange); margin-bottom: 10px;">
                                     ${generarEstrellas(r.calificacion)}
                                 </div>
@@ -732,6 +737,19 @@ function manejarConfiguracion() {
         }
     });
 }
+
+window.reportarResena = async function(id) {
+    if (!confirm("¿Estás seguro de que deseas reportar esta reseña por contenido inapropiado? (Se ocultará para revisión)")) return;
+    try {
+        const res = await fetch(`/api/resenas/${id}/reportar`, { method: 'PUT' });
+        if (res.ok) {
+            alert("Reseña reportada exitosamente. Un administrador la revisará.");
+            location.reload(); 
+        }
+    } catch (e) {
+        console.error("Error al reportar:", e);
+    }
+};
 
 // --- INICIALIZACIÓN GLOBAL ---
 document.addEventListener('DOMContentLoaded', () => {
