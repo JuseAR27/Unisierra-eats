@@ -309,6 +309,108 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function iniciarReportes() {
-        console.log("Módulo de reportes pendiente de migrar a base de datos.");
+        const adminStatsGrid = document.querySelector('.admin-stats-grid');
+        if (!adminStatsGrid) return; // Validación de seguridad
+
+        async function cargarDatosEstadisticos() {
+            try {
+                // 1. Obtenemos TODOS los productos aprovechando la ruta que ya tiene los promedios
+                const res = await fetch('/api/productos');
+                const productos = await res.json();
+                
+                // Solo nos interesan los productos que ya han sido calificados
+                const evaluados = productos.filter(p => p.numResenas > 0);
+                
+                // Elementos del DOM donde pintaremos la información
+                const elTotal = document.getElementById('rep-total');
+                const elPromedio = document.getElementById('rep-promedio');
+                const elPopNombre = document.getElementById('rep-pop-nombre');
+                const elPopVotos = document.getElementById('rep-pop-votos');
+                const listaMejores = document.getElementById('rep-lista-mejores');
+                const listaPeores = document.getElementById('rep-lista-peores');
+
+                if (evaluados.length === 0) {
+                    if (listaMejores) listaMejores.innerHTML = "<p class='text-muted' style='padding:15px;'>No hay datos suficientes.</p>";
+                    if (listaPeores) listaPeores.innerHTML = "<p class='text-muted' style='padding:15px;'>No hay datos suficientes.</p>";
+                    return;
+                }
+
+                // 2. Realizamos los cálculos globales
+                let totalResenas = 0;
+                let sumaCalificaciones = 0;
+                let masPopular = evaluados[0]; // Asumimos el primero temporalmente
+
+                evaluados.forEach(p => {
+                    totalResenas += p.numResenas;
+                    sumaCalificaciones += (p.calificacion * p.numResenas); // Peso real de la calificación
+                    
+                    // Comparamos para encontrar el que tiene más reseñas
+                    if (p.numResenas > masPopular.numResenas) {
+                        masPopular = p;
+                    }
+                });
+
+                const promedioGeneral = (sumaCalificaciones / totalResenas).toFixed(1);
+
+                // 3. Inyectar datos en las tarjetas principales
+                if(elTotal) elTotal.textContent = totalResenas;
+                if(elPromedio) elPromedio.textContent = `${promedioGeneral} / 5.0`;
+                if(elPopNombre) elPopNombre.textContent = masPopular.nombre;
+                if(elPopVotos) elPopVotos.textContent = `${masPopular.numResenas} evaluaciones`;
+
+                // 4. Preparar Rankings
+                // Mejores: Ordenados de mayor a menor calificación
+                const topMejores = [...evaluados].sort((a, b) => b.calificacion - a.calificacion).slice(0, 3);
+                // Peores: Ordenados de menor a mayor calificación
+                const topPeores = [...evaluados].sort((a, b) => a.calificacion - b.calificacion).slice(0, 3);
+
+                // 5. Inyectar listas de Rankings
+                if(listaMejores) {
+                    listaMejores.innerHTML = "";
+                    topMejores.forEach(p => {
+                        listaMejores.innerHTML += `
+                            <li style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border-color);">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <img src="${p.imagen}" style="width:45px; height:45px; border-radius:8px; object-fit:cover; border:1px solid var(--border-color);">
+                                    <div style="display:flex; flex-direction:column;">
+                                        <strong>${p.nombre}</strong>
+                                        <small class="text-muted">${p.numResenas} reseñas registradas</small>
+                                    </div>
+                                </div>
+                                <span style="color:var(--primary-orange); font-weight:bold; font-size:1.2rem;">
+                                    <i class="fas fa-star"></i> ${p.calificacion.toFixed(1)}
+                                </span>
+                            </li>
+                        `;
+                    });
+                }
+
+                if(listaPeores) {
+                    listaPeores.innerHTML = "";
+                    topPeores.forEach(p => {
+                        listaPeores.innerHTML += `
+                            <li style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border-color);">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <img src="${p.imagen}" style="width:45px; height:45px; border-radius:8px; object-fit:cover; border:1px solid var(--border-color);">
+                                    <div style="display:flex; flex-direction:column;">
+                                        <strong>${p.nombre}</strong>
+                                        <small class="text-muted">${p.numResenas} reseñas registradas</small>
+                                    </div>
+                                </div>
+                                <span style="color:#d93025; font-weight:bold; font-size:1.2rem;">
+                                    <i class="fas fa-star"></i> ${p.calificacion.toFixed(1)}
+                                </span>
+                            </li>
+                        `;
+                    });
+                }
+
+            } catch (error) {
+                console.error("Error al cargar las estadísticas:", error);
+            }
+        }
+
+        // Ejecutar al entrar a la vista
+        cargarDatosEstadisticos();
     }
 });

@@ -1613,3 +1613,28 @@ footer {
     background-color: #d93025;
     color: #ffffff;
 }
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px; 
+    gap: 20px;
+    align-items: start;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto; 
+    border-radius: 8px;
+}
+
+.admin-table {
+    width: 100%;
+    min-width: 750px; 
+    border-collapse: collapse;
+}
+
+@media (max-width: 1024px) {
+    .inventory-grid {
+        grid-template-columns: 1fr; 
+    }
+}
