@@ -95,10 +95,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function renderizarTabla(productos) {
             const terminoBusqueda = searchInput.value.toLowerCase().trim();
+            const selectCategoria = document.getElementById('filtro-categoria-admin');
+            const categoriaBuscada = selectCategoria ? selectCategoria.value.toLowerCase() : "";
             adminTable.innerHTML = "";
-
             const productosFiltrados = productos.filter(p => {
-                return p.nombre.toLowerCase().includes(terminoBusqueda) || p.id_producto.toString().includes(terminoBusqueda);
+                const pasaTexto = p.nombre.toLowerCase().includes(terminoBusqueda) || p.id_producto.toString().includes(terminoBusqueda);
+                let pasaCategoria = true;
+                if (categoriaBuscada !== "") {
+                    pasaCategoria = p.categoria && p.categoria.toLowerCase().includes(categoriaBuscada);
+                }
+                return pasaTexto && pasaCategoria;
             });
 
             if (productosFiltrados.length === 0) {
@@ -232,6 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('input', () => {
             cargarProductos(); 
         });
+
+        const selectCategoria = document.getElementById('filtro-categoria-admin');
+        if (selectCategoria) {
+            selectCategoria.addEventListener('change', () => {
+                cargarProductos();
+            });
+        }
 
         // Iniciar la carga de la tabla al entrar a la página
         cargarProductos();

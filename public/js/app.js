@@ -203,7 +203,8 @@ async function renderizarMenu() {
         const termino = query.toLowerCase();
         productos = productos.filter(p => 
             p.nombre.toLowerCase().includes(termino) || 
-            p.descripcion.toLowerCase().includes(termino)
+            p.descripcion.toLowerCase().includes(termino) ||
+            (p.categoria && p.categoria.toLowerCase().includes(termino))
         );
         document.title = `Resultados para "${query}" - UniSierra Eats`;
     }
@@ -248,11 +249,11 @@ async function renderizarBusqueda() {
     const resultsList = document.querySelector('.results-list');
     if (!resultsList) return;
 
-    // 1. Obtener lo que el usuario buscó desde la URL
+    // Obtener lo que el usuario buscó desde la URL
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q') || '';
     
-    // 2. Colocar la palabra buscada en el input del header para que no se borre
+    // Colocar la palabra buscada en el input del header para que no se borre
     const searchInput = document.querySelector('.search-bar input');
     if (searchInput && query) {
         searchInput.value = query;
@@ -264,37 +265,45 @@ async function renderizarBusqueda() {
         titleElement.textContent = query ? `Top Resultados para "${query}"` : 'Todos los productos';
     }
 
-    // 4. Obtener productos de la API
+    // Obtener productos de la API
     let productos = await obtenerProductosAPI();
 
-    // 5. Filtrar por el texto buscado
+    // Filtrar por el texto buscado
+    const categoria = urlParams.get('categoria') || '';
+
     if (query) {
         const termino = query.toLowerCase();
         productos = productos.filter(p => 
             p.nombre.toLowerCase().includes(termino) || 
-            p.descripcion.toLowerCase().includes(termino)
+            p.descripcion.toLowerCase().includes(termino) ||
+            (p.categoria && p.categoria.toLowerCase().includes(termino)) // <-- NUEVO: Busca en categoría
         );
     }
 
-    // 6. Activar la interactividad de los botones de precio (Filtro visual inicial)
+    if (categoria) {
+        const terminoCat = categoria.toLowerCase();
+        productos = productos.filter(p => 
+            p.categoria && p.categoria.toLowerCase().includes(terminoCat) // <-- NUEVO: Filtra directo
+        );
+        if (titleElement) titleElement.textContent = `Categoría: ${categoria}`;
+    }
+
+    // Activar la interactividad de los botones de precio
     const priceBtns = document.querySelectorAll('.btn-price');
     priceBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             priceBtns.forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
-            // Aquí en un futuro puedes agregar lógica extra para filtrar por precio
         });
     });
 
     resultsList.innerHTML = ""; 
 
-    // 7. Mostrar mensaje si no hay resultados
     if (productos.length === 0) {
         resultsList.innerHTML = `<p style="text-align:center; margin-top:20px; color:var(--text-muted);">No se encontraron productos que coincidan con tu búsqueda.</p>`;
         return;
     }
 
-    // 8. Pintar las tarjetas de resultados usando la estructura de busqueda.html
     productos.forEach(p => {
         resultsList.innerHTML += `
             <div class="result-card">
