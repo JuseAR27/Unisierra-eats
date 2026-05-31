@@ -1614,27 +1614,36 @@ footer {
     color: #ffffff;
 }
 
+.admin-content {
+    max-width: calc(100vw - 250px); 
+    box-sizing: border-box;
+}
+
 .inventory-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 350px; 
+    grid-template-columns: minmax(0, 1fr) 320px; 
     gap: 20px;
     align-items: start;
+    width: 100%;
 }
 
 .table-container {
     width: 100%;
-    overflow-x: auto; 
+    min-width: 0;
+    overflow-x: auto;
     border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .admin-table {
     width: 100%;
-    min-width: 750px; 
+    min-width: 700px;
     border-collapse: collapse;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .inventory-grid {
+        /* Si la pantalla es menor a 1200px, mandamos el formulario para abajo */
         grid-template-columns: 1fr; 
     }
 }
