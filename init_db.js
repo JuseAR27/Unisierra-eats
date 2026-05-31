@@ -32,11 +32,15 @@ db.serialize(() => {
 
     // Crear tabla Productos
     db.run(`CREATE TABLE IF NOT EXISTS Productos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL,
-        descripcion TEXT,
-        precio REAL NOT NULL,
-        imagen_url TEXT
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    precio REAL NOT NULL,
+    precioNivel TEXT NOT NULL,
+    descripcion TEXT,
+    imagen TEXT,
+    calificacion REAL DEFAULT 5.0,
+    numResenas INTEGER DEFAULT 0,
+    categoria TEXT NOT NULL
     )`);
 
     // Crear tabla Reseñas
@@ -53,19 +57,13 @@ db.serialize(() => {
 
     console.log('Tablas creadas correctamente.');
 
-    // Insertar datos iniciales para poder hacer pruebas
-    // Usamos INSERT OR IGNORE para evitar duplicados
+    //Datos de prueba
     db.run(`INSERT OR IGNORE INTO Roles (id, nombre) VALUES (1, 'Administrador'), (2, 'Estudiante')`);
     
     db.run(`INSERT OR IGNORE INTO Usuarios (id, nombre, correo, password, rol_id) 
             VALUES (1, 'Admin Principal', 'admin@unisierra.edu.mx', 'admin123', 1)`);
 
-    db.run(`INSERT OR IGNORE INTO Productos (id, nombre, descripcion, precio) VALUES 
-        (1, 'Café Americano', 'Delicioso café de grano recién hecho', 20.00),
-        (2, 'Sandwich Especial', 'Sandwich integral con jamón, queso y aderezos', 35.50)
-    `);
-
-    console.log('Datos iniciales (Seeders) insertados.');
+    console.log('Datos iniciales insertados.');
 });
 
 // Cierre de la conexión a la base de datos

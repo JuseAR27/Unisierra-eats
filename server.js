@@ -37,17 +37,16 @@ app.get('/api/productos', (req, res) => {
 
 // POST: Crear un nuevo producto (Alta)
 app.post('/api/productos', (req, res) => {
-    const { nombre, descripcion, precio, imagen_url } = req.body;
-    const sql = "INSERT INTO Productos (nombre, descripcion, precio, imagen_url) VALUES (?, ?, ?, ?)";
+    const { nombre, precio, precioNivel, descripcion, imagen, categoria } = req.body;
     
-    db.run(sql, [nombre, descripcion, precio, imagen_url || ''], function(err) {
+    const query = `INSERT INTO Productos (nombre, precio, precioNivel, descripcion, imagen, categoria) 
+                   VALUES (?, ?, ?, ?, ?, ?)`;
+                   
+    db.run(query, [nombre, precio, precioNivel, descripcion, imagen, categoria], function(err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        res.json({ 
-            mensaje: "Producto creado con éxito", 
-            id: this.lastID // Devolvemos el ID del producto recién creado
-        });
+        res.json({ message: "Producto registrado con éxito", id: this.lastID });
     });
 });
 

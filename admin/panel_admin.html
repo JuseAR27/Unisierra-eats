@@ -118,12 +118,14 @@
                         <label>Precio ($) *</label>
                         <input type="number" step="0.50" placeholder="0.00" required>
                     </div>
-                    <div class="form-group half-width">
-                        <label>Categoría *</label>
-                        <select required>
-                            <option>Comidas Fuertes</option>
-                            <option>Bebidas</option>
-                            <option>Snacks</option>
+                    <div class="form-group">
+                        <label for="prod-categoria">Categoría del Producto</label>
+                        <select id="prod-categoria" required name="categoria" class="form-control">
+                            <option value="">-- Selecciona una categoría --</option>
+                            <option value="comidas">Comidas Fuertes</option>
+                            <option value="bebidas">Bebidas y Café</option>
+                            <option value="snacks">Snacks</option>
+                            <option value="sanas">Opciones Sanas</option>
                         </select>
                     </div>
                 </div>

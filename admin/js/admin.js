@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = modal.querySelector('.admin-form');
         const modalTitle = modal.querySelector('.modal-header h2');
         const searchInput = document.querySelector('.table-toolbar .search-bar input');
-
         const inputNombre = form.querySelector('input[type="text"]');
         const inputPrecio = form.querySelector('input[type="number"]');
         const inputDesc = form.querySelector('textarea');
         const inputImagen = form.querySelector('input[type="url"]');
+        const inputCategoria = form.querySelector('select');
 
         let productoEnEdicionId = null;
 
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="price-cell">$${parseFloat(p.precio).toFixed(2)}</td>
                     <td><span class="status-badge active">Disponible</span></td>
                     <td class="table-actions">
-                        <button class="btn-icon edit" data-id="${p.id}" data-nombre="${p.nombre}" data-precio="${p.precio}" data-desc="${p.descripcion}" data-img="${p.imagen_url}" title="Editar"><i class="fas fa-pen"></i></button>
+                        <button class="btn-icon edit" data-id="${p.id}" data-nombre="${p.nombre}" data-precio="${p.precio}" data-desc="${p.descripcion}" data-img="${p.imagen_url}" data-categoria="${p.categoria}" title="Editar"><i class="fas fa-pen"></i></button>
                         <button class="btn-icon delete" data-id="${p.id}" title="Eliminar"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
@@ -96,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 nombre: inputNombre.value,
                 precio: parseFloat(inputPrecio.value),
                 descripcion: inputDesc.value,
-                imagen_url: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60"
+                imagen_url: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60",
+                categoria: inputCategoria.value
             };
 
             try {
@@ -139,6 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     inputPrecio.value = dataset.precio;
                     inputDesc.value = dataset.desc !== 'null' ? dataset.desc : "";
                     inputImagen.value = dataset.img !== 'null' ? dataset.img : "";
+                    
+                    if(inputCategoria) {
+                        inputCategoria.value = dataset.categoria !== 'null' && dataset.categoria !== 'undefined' ? dataset.categoria : "";
+                    }
                     
                     modal.style.display = 'flex';
                 });
