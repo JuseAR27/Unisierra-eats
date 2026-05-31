@@ -81,6 +81,11 @@ app.delete('/api/productos/:id', (req, res) => {
 // POST: Registrar un nuevo usuario
 app.post('/api/registro', (req, res) => {
     const { nombre, correo, password } = req.body;
+
+    if (!correo.toLowerCase().endsWith('@unisierra.edu.mx')) {
+        return res.status(400).json({ error: "Solo se permite el registro con correos institucionales (@unisierra.edu.mx)." });
+    }
+
     const sql = "INSERT INTO Usuarios (nombre, correo, password, rol_id) VALUES (?, ?, ?, 2)";
     
     db.run(sql, [nombre, correo, password], function(err) {
