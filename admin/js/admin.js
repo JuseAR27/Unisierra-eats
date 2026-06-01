@@ -150,33 +150,29 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                let url = '/api/productos';
-                let method = 'POST';
-
                 if (productoEnEdicionId) {
-                    url = `/api/productos/${productoEnEdicionId}`;
-                    method = 'PUT';
+                    // Actualizar
+                    await fetch(`/api/productos/${productoEnEdicionId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    Swal.fire({ icon: 'success', title: '¡Actualizado!', text: 'Producto actualizado exitosamente.', confirmButtonColor: '#0cb06e' });
+                } else {
+                    await fetch('/api/productos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    Swal.fire({ icon: 'success', title: '¡Agregado!', text: 'Producto agregado exitosamente.', confirmButtonColor: '#0cb06e' });
                 }
 
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!res.ok) {
-                    const dataErr = await res.json();
-                    throw new Error(dataErr.error || "Fallo interno en el servidor");
-                }
-
-                alert(productoEnEdicionId ? "Producto actualizado exitosamente en la BD." : "Producto agregado exitosamente a la BD.");
-                
                 modal.style.display = 'none';
                 form.reset();
                 cargarProductos();
             } catch (error) {
                 console.error("Error al guardar:", error);
-                alert("Hubo un error al guardar el producto:\n" + error.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Hubo un error al guardar el producto.', confirmButtonColor: '#d93025' });
             }
         });
 
@@ -233,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Abrir modal para nuevo registro
         const btnAdd = document.querySelector('.content-header .btn-solid');
         if (btnAdd) {
             btnAdd.addEventListener('click', () => {
@@ -312,19 +307,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Funciones para los botones de la tarjeta
-        window.aprobarResena = async (id) => {
-            if(confirm("¿Estás seguro de restaurar esta reseña a la vista pública?")) {
-                await fetch(`/api/admin/resenas/${id}/aprobar`, {method: 'PUT'});
-                cargarReportadas();
-            }
+        window.aprobarResena = (id) => {
+            Swal.fire({
+                title: '¿Ignorar Reporte?',
+                text: "La reseña volverá a ser pública.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0cb06e',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, restaurar',
+                cancelButtonText: 'Cancelar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await fetch(`/api/admin/resenas/${id}/aprobar`, {method: 'PUT'});
+                    cargarReportadas();
+                    Swal.fire({ icon: 'success', title: 'Restaurada', text: 'La reseña vuelve a ser pública.', confirmButtonColor: '#0cb06e' });
+                }
+            });
         };
 
-        window.eliminarResena = async (id) => {
-            if(confirm("¿Borrar definitivamente esta reseña por violar las normas?")) {
-                // Reutilizamos tu endpoint DELETE original de reseñas de server.js
-                await fetch(`/api/resenas/${id}`, {method: 'DELETE'});
-                cargarReportadas();
-            }
+        window.eliminarResena = (id) => {
+            Swal.fire({
+                title: '¿Borrar definitivamente?',
+                text: "Esta reseña será eliminada por violar las normas.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d93025',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, borrar',
+                cancelButtonText: 'Cancelar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await fetch(`/api/resenas/${id}`, {method: 'DELETE'});
+                    cargarReportadas();
+                    Swal.fire({ icon: 'success', title: 'Eliminada', text: 'La reseña fue borrada del sistema.', confirmButtonColor: '#0cb06e' });
+                }
+            });
         };
 
         cargarReportadas();

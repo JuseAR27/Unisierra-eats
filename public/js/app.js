@@ -109,14 +109,24 @@ function configurarAuth() {
                         window.location.reload(); 
                     }
                 } else {
-                    alert(data.error || "Error al iniciar sesión");
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'Error de acceso', 
+                        text: data.error || "Credenciales incorrectas.", 
+                        confirmButtonColor: '#d93025' 
+                    });
                 }
             } else {
                 // REGISTRARSE
                 payload.nombre = inputNombre.value;
 
                 if (!payload.correo.toLowerCase().endsWith('@unisierra.edu.mx')) {
-                    alert("Por favor, utiliza tu correo institucional (@unisierra.edu.mx) para registrarte.");
+                    Swal.fire({ 
+                        icon: 'warning', 
+                        title: 'Correo no válido', 
+                        text: 'Por favor, utiliza tu correo institucional (@unisierra.edu.mx) para registrarte.', 
+                        confirmButtonColor: '#f39c12' 
+                    });
                     return;
                 }
 
@@ -126,19 +136,35 @@ function configurarAuth() {
                 const data = await res.json();
                 
                 if (res.ok) {
-                    alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: '¡Registro exitoso!', 
+                        text: 'Ahora puedes iniciar sesión con tu nueva cuenta.', 
+                        confirmButtonColor: '#0cb06e' 
+                    });
+                    
                     isLoginMode = true;
                     document.getElementById('modalTitle').textContent = "Iniciar Sesión";
                     document.querySelector('#authForm button[type="submit"]').textContent = "Entrar";
                     groupNombre.style.display = "none";
                     authForm.reset();
                 } else {
-                    alert(data.error || "Error al registrar");
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'Error al registrar', 
+                        text: data.error || "Es posible que el correo ya esté en uso.", 
+                        confirmButtonColor: '#d93025' 
+                    });
                 }
             }
         } catch (error) {
             console.error("Error de conexión:", error);
-            alert("No se pudo conectar con el servidor.");
+            Swal.fire({ 
+                icon: 'error', 
+                title: 'Fallo de conexión', 
+                text: 'No se pudo conectar con el servidor. Intenta de nuevo más tarde.', 
+                confirmButtonColor: '#d93025' 
+            });
         }
     });
 }
@@ -789,7 +815,7 @@ function manejarConfiguracion() {
             console.error("Error al actualizar:", error);
         }
     });
-
+    
     // Eliminar Cuenta
     btnEliminar.addEventListener('click', async () => {
         const confirmado = await mostrarModalPersonalizado({
@@ -804,7 +830,12 @@ function manejarConfiguracion() {
                 if (res.ok) {
                     // Borramos la sesión y lo mandamos a la página principal
                     localStorage.removeItem('unisierra_sesion');
-                    alert("Tu cuenta ha sido eliminada.");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cuenta Eliminada',
+                        text: 'Tu cuenta ha sido eliminada exitosamente.',
+                        confirmButtonColor: '#0cb06e'
+                    });
                     window.location.href = "index.html";
                 }
             } catch (error) {
@@ -814,17 +845,33 @@ function manejarConfiguracion() {
     });
 }
 
-window.reportarResena = async function(id) {
-    if (!confirm("¿Estás seguro de que deseas reportar esta reseña por contenido inapropiado? (Se ocultará para revisión)")) return;
-    try {
-        const res = await fetch(`/api/resenas/${id}/reportar`, { method: 'PUT' });
-        if (res.ok) {
-            alert("Reseña reportada exitosamente. Un administrador la revisará.");
-            location.reload(); 
+window.reportarResena = function(id) {
+    Swal.fire({
+        title: '¿Reportar Reseña?',
+        text: "Se ocultará temporalmente hasta que un administrador la revise.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f39c12', // Color Naranja
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, reportar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`/api/resenas/${id}/reportar`, { method: 'PUT' });
+                if (res.ok) {
+                    Swal.fire({
+                        icon: 'success', 
+                        title: 'Reportada', 
+                        text: 'Un administrador revisará este contenido.', 
+                        confirmButtonColor: '#0cb06e'
+                    }).then(() => location.reload()); // Recarga la página después de darle OK
+                }
+            } catch (e) {
+                console.error("Error al reportar:", e);
+            }
         }
-    } catch (e) {
-        console.error("Error al reportar:", e);
-    }
+    });
 };
 
 // --- INICIALIZACIÓN GLOBAL ---
