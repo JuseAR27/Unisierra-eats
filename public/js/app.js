@@ -147,6 +147,7 @@ function configurarAuth() {
                     document.getElementById('modalTitle').textContent = "Iniciar Sesión";
                     document.querySelector('#authForm button[type="submit"]').textContent = "Entrar";
                     groupNombre.style.display = "none";
+                    inputNombre.required = false;
                     authForm.reset();
                 } else {
                     Swal.fire({ 
@@ -551,7 +552,16 @@ async function manejarEscrituraResena() {
 
     formReview.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (calificacionSeleccionada === 0) return alert("Selecciona una calificación.");
+        
+        if (calificacionSeleccionada === 0) {
+            return Swal.fire({
+                icon: 'warning',
+                title: 'Calificación incompleta',
+                text: 'Por favor selecciona una calificación usando las estrellas.',
+                confirmButtonColor: '#f39c12'
+            });
+        }
+        
         const comentario = document.getElementById('review-body').value.trim();
 
         const payload = {
@@ -565,12 +575,32 @@ async function manejarEscrituraResena() {
             const res = await fetch('/api/resenas', {
                 method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
             });
+            
             if (res.ok) {
-                alert("¡Gracias por tu opinión!");
-                window.location.href = `detalle_producto.html?id=${prodId}`;
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Gracias por tu opinión!',
+                    text: 'Tu reseña ha sido publicada exitosamente.',
+                    confirmButtonColor: '#0cb06e'
+                }).then(() => {
+                    window.location.href = `detalle_producto.html?id=${prodId}`;
+                });
+            } else {
+                const data = await res.json();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No se pudo publicar',
+                    text: data.error || 'Ocurrió un problema al guardar tu reseña.',
+                    confirmButtonColor: '#d93025'
+                });
             }
         } catch (error) {
-            alert("Error al guardar reseña.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'Hubo un error al intentar conectar con el servidor.',
+                confirmButtonColor: '#d93025'
+            });
         }
     });
 }
