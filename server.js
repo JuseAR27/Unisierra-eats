@@ -53,10 +53,10 @@ app.post('/api/productos', (req, res) => {
 // PUT: Modificar un producto existente
 app.put('/api/productos/:id', (req, res) => {
     const id = req.params.id;
-    const { nombre, descripcion, precio, imagen, categoria } = req.body; 
-    const sql = "UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, imagen = ?, categoria = ? WHERE id_producto = ?";
+    const { nombre, descripcion, precio, precioNivel, imagen, categoria } = req.body; 
+    const sql = "UPDATE Productos SET nombre = ?, descripcion = ?, precio = ?, precioNivel = ?, imagen = ?, categoria = ? WHERE id_producto = ?";
     
-    db.run(sql, [nombre, descripcion, precio, imagen || '', categoria, id], function(err) {
+    db.run(sql, [nombre, descripcion, precio, precioNivel, imagen || '', categoria, id], function(err) {
         if (err) {
             console.error("Error al actualizar producto:", err.message);
             return res.status(500).json({ error: err.message });

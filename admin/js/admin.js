@@ -135,39 +135,48 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const precioIngresado = parseFloat(inputPrecio.value);
+            let nivelCalculado = "$";
+            if (precioIngresado > 50 && precioIngresado <= 100) nivelCalculado = "$$";
+            if (precioIngresado > 100) nivelCalculado = "$$$";
+
             const payload = {
                 nombre: inputNombre.value,
-                precio: parseFloat(inputPrecio.value),
+                precio: precioIngresado,
+                precioNivel: nivelCalculado,
                 descripcion: inputDesc.value,
                 imagen: inputImagen.value || "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=60",
                 categoria: inputCategoria.value
             };
 
             try {
+                let url = '/api/productos';
+                let method = 'POST';
+
                 if (productoEnEdicionId) {
-                    // Actualizar
-                    await fetch(`/api/productos/${productoEnEdicionId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    alert("Producto actualizado exitosamente en la BD.");
-                } else {
-                    // Crear nuevo
-                    await fetch('/api/productos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    alert("Producto agregado exitosamente a la BD.");
+                    url = `/api/productos/${productoEnEdicionId}`;
+                    method = 'PUT';
                 }
 
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const dataErr = await res.json();
+                    throw new Error(dataErr.error || "Fallo interno en el servidor");
+                }
+
+                alert(productoEnEdicionId ? "Producto actualizado exitosamente en la BD." : "Producto agregado exitosamente a la BD.");
+                
                 modal.style.display = 'none';
                 form.reset();
                 cargarProductos();
             } catch (error) {
                 console.error("Error al guardar:", error);
-                alert("Hubo un error al guardar el producto.");
+                alert("Hubo un error al guardar el producto:\n" + error.message);
             }
         });
 
